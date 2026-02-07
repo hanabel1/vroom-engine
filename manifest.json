@@ -1,0 +1,14 @@
+{
+  "name": "Vroom",
+  "id": "1601920851594364903",
+  "api": "1.0.0",
+  "main": "./canvas.js",
+  "ui": "./plugin.html",
+  "editorType": ["dev", "figma"],
+  "networkAccess": {
+    "allowedDomains": ["none"]
+  },
+  "capabilities": ["inspect", "vscode", "codegen"],
+  "documentAccess": "dynamic-page",
+  "codegenLanguages": [{ "label": "React", "value": "react" }]
+}

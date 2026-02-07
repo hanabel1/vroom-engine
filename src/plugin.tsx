@@ -1,5 +1,5 @@
 import { createRoot } from 'react-dom/client';
-import { Reshaped, View, Button } from 'reshaped';
+import { Reshaped } from 'reshaped';
 import 'reshaped/themes/figma/theme.css';
 import App from './ui/App';
 

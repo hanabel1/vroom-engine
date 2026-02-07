@@ -1,3 +1,4 @@
+import { Card, View, Text, Badge, Button, Actionable } from 'reshaped';
 import type { SearchableComponent } from '../hooks/useSearch';
 
 interface ResultCardProps {
@@ -7,12 +8,6 @@ interface ResultCardProps {
 }
 
 export function ResultCard({ component, onClick, onPlace }: ResultCardProps) {
-  const handleCardClick = (e: React.MouseEvent) => {
-    if (onClick) {
-      onClick();
-    }
-  };
-
   const handlePlaceClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (onPlace) {
@@ -20,28 +15,58 @@ export function ResultCard({ component, onClick, onPlace }: ResultCardProps) {
     }
   };
 
-  return (
-    <div className="result-card" onClick={handleCardClick}>
-      <div className="result-preview">
-        {/* Placeholder for preview image */}
-        <div className="result-preview-placeholder">
+  const cardContent = (
+    <View gap={3}>
+      {/* Preview placeholder */}
+      <View
+        align="center"
+        justify="center"
+        backgroundColor="neutral-faded"
+        borderRadius="medium"
+        height={20}
+        width="100%"
+      >
+        <Text variant="title-3" color="neutral">
           {component.name.charAt(0)}
-        </div>
-      </div>
-      <div className="result-info">
-        <div className="result-header">
-          <h3 className="result-name">{component.name}</h3>
-          <span className="result-system-badge">{component.designSystemName}</span>
-        </div>
-        <div className="result-category">{component.category}</div>
-      </div>
-      <button 
-        className="result-place-btn"
+        </Text>
+      </View>
+
+      {/* Component info */}
+      <View gap={2}>
+        <View direction="row" align="center" justify="space-between" gap={2}>
+          <Text variant="body-2" weight="bold">
+            {component.name}
+          </Text>
+          <Badge color="neutral" size="small">
+            {component.designSystemName}
+          </Badge>
+        </View>
+        <Text variant="caption-1" color="neutral">
+          {component.category}
+        </Text>
+      </View>
+
+      {/* Place button */}
+      <Button
+        fullWidth
+        variant="solid"
+        color="primary"
+        size="small"
         onClick={handlePlaceClick}
-        title="Place component"
       >
         Place
-      </button>
-    </div>
+      </Button>
+    </View>
   );
+
+  // If onClick is provided, make the card actionable (clickable)
+  if (onClick) {
+    return (
+      <Card padding={3}>
+        <Actionable onClick={onClick}>{cardContent}</Actionable>
+      </Card>
+    );
+  }
+
+  return <Card padding={3}>{cardContent}</Card>;
 }

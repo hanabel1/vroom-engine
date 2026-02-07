@@ -1,0 +1,63 @@
+{
+  "id": "mock-ds1",
+  "name": "Mock DS1",
+  "version": "1.0",
+  "description": "Mock design system for testing search functionality",
+  "sourceUrl": "https://example.com/mock-ds1",
+  "components": [
+    {
+      "id": "action-button",
+      "name": "ActionButton",
+      "aliases": ["btn", "cta"],
+      "description": "Primary action button component",
+      "category": "input",
+      "previewUrl": "previews/mock-ds1/action-button.png",
+      "html": "<div>this is mock</div>"
+    },
+    {
+      "id": "combobox",
+      "name": "Combobox",
+      "aliases": ["autocomplete", "typeahead", "select with search"],
+      "description": "Searchable select component",
+      "category": "input",
+      "previewUrl": "previews/mock-ds1/combobox.png",
+      "html": "<div>this is mock</div>"
+    },
+    {
+      "id": "surface",
+      "name": "Surface",
+      "aliases": ["card", "panel", "container"],
+      "description": "Container surface component",
+      "category": "surface",
+      "previewUrl": "previews/mock-ds1/surface.png",
+      "html": "<div>this is mock</div>"
+    },
+    {
+      "id": "pill",
+      "name": "Pill",
+      "aliases": ["chip", "tag", "badge-label"],
+      "description": "Small label component",
+      "category": "display",
+      "previewUrl": "previews/mock-ds1/pill.png",
+      "html": "<div>this is mock</div>"
+    },
+    {
+      "id": "toast",
+      "name": "Toast",
+      "aliases": ["notification", "alert", "message", "banner"],
+      "description": "Temporary notification component",
+      "category": "feedback",
+      "previewUrl": "previews/mock-ds1/toast.png",
+      "html": "<div>this is mock</div>"
+    },
+    {
+      "id": "toggle-switch",
+      "name": "ToggleSwitch",
+      "aliases": ["toggle", "switch", "on-off"],
+      "description": "Binary toggle component",
+      "category": "input",
+      "previewUrl": "previews/mock-ds1/toggle-switch.png",
+      "html": "<div>this is mock</div>"
+    }
+  ]
+}

@@ -1,0 +1,63 @@
+{
+  "id": "mock-ds3",
+  "name": "Mock DS3",
+  "version": "3.0",
+  "description": "Mock design system for testing search functionality",
+  "sourceUrl": "https://example.com/mock-ds3",
+  "components": [
+    {
+      "id": "call-to-action",
+      "name": "CallToAction",
+      "aliases": ["button", "btn", "cta"],
+      "description": "Call to action button",
+      "category": "input",
+      "previewUrl": "previews/mock-ds3/call-to-action.png",
+      "html": "<div>this is mock</div>"
+    },
+    {
+      "id": "typeahead",
+      "name": "Typeahead",
+      "aliases": ["combobox", "autocomplete", "select with search"],
+      "description": "Auto-complete search input",
+      "category": "input",
+      "previewUrl": "previews/mock-ds3/typeahead.png",
+      "html": "<div>this is mock</div>"
+    },
+    {
+      "id": "navigation-trail",
+      "name": "NavigationTrail",
+      "aliases": ["breadcrumbs", "breadcrumb"],
+      "description": "Breadcrumb navigation",
+      "category": "navigation",
+      "previewUrl": "previews/mock-ds3/navigation-trail.png",
+      "html": "<div>this is mock</div>"
+    },
+    {
+      "id": "profile-image",
+      "name": "ProfileImage",
+      "aliases": ["avatar", "user-icon"],
+      "description": "User profile picture component",
+      "category": "display",
+      "previewUrl": "previews/mock-ds3/profile-image.png",
+      "html": "<div>this is mock</div>"
+    },
+    {
+      "id": "loading-bar",
+      "name": "LoadingBar",
+      "aliases": ["progress", "progress-bar"],
+      "description": "Progress indicator",
+      "category": "feedback",
+      "previewUrl": "previews/mock-ds3/loading-bar.png",
+      "html": "<div>this is mock</div>"
+    },
+    {
+      "id": "collapsible",
+      "name": "Collapsible",
+      "aliases": ["accordion", "expandable"],
+      "description": "Expandable content panel",
+      "category": "display",
+      "previewUrl": "previews/mock-ds3/collapsible.png",
+      "html": "<div>this is mock</div>"
+    }
+  ]
+}

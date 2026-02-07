@@ -1,0 +1,17 @@
+[
+  ["accordion", "collapse", "collabsible", "disclosure", "expander", "expansion", "stack view", "toggle details"],
+  ["combobox", "autocomplete", "typeahead", "select with search"],
+  ["dialog", "modal", "popup", "overlay dialog"],
+  ["chip", "tag", "badge-label", "pill", "label", "lozenge", "compound tag", "status"],
+  ["notification", "alert", "message", "banner", "toast", "banner alert", "callout", "inline message"],
+  ["toggle", "switch", "on-off"],
+  ["dropdown", "select", "picker", "listbox"],
+  ["textfield", "input", "text-input", "form-field"],
+  ["card", "panel", "container", "surface", "content card", "tile"],
+  ["tabs", "tab-bar", "segmented-control"],
+  ["breadcrumbs", "breadcrumb", "navigation-trail"],
+  ["tooltip", "hint", "info-tip"],
+  ["avatar", "profile-image", "user-icon"],
+  ["progress", "progress-bar", "loading-bar"],
+  ["stepper", "wizard", "multi-step"]
+]

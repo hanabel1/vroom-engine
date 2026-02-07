@@ -1,4 +1,4 @@
-import { ToggleButtonGroup, ToggleButton } from 'reshaped';
+import { Badge, View } from 'reshaped';
 import { useDesignSystemOptions } from '@/ui/selectors';
 import { useAppStore } from '@/ui/store';
 
@@ -6,29 +6,42 @@ export function FilterChips() {
   const designSystems = useDesignSystemOptions();
   const activeFilters = useAppStore((state) => state.activeFilters);
 
-  // Determine selected value: ["all"] when no filters, or [systemId]
-  const selectedValue = activeFilters.length === 0 ? ['all'] : activeFilters;
+  const isAllSelected = activeFilters.length === 0;
 
-  const handleChange = (args: { value: string[] }) => {
-    const newValue = args.value[0]; // Single selection mode
-    
-    if (!newValue || newValue === 'all') {
-      // Clear filters - show all systems
+  const handleFilterClick = (systemId: string | null) => {
+    if (systemId === null) {
+      // "All" clicked - clear filters
       useAppStore.getState().setActiveFilters([]);
     } else {
-      // Set single system filter
-      useAppStore.getState().setActiveFilters([newValue]);
+      // Single system filter
+      useAppStore.getState().setActiveFilters([systemId]);
     }
   };
 
   return (
-    <ToggleButtonGroup value={selectedValue} onChange={handleChange} selectionMode="single">
-      <ToggleButton value="all">All</ToggleButton>
-      {designSystems.map((system) => (
-        <ToggleButton key={system.id} value={system.id}>
-          {system.name}
-        </ToggleButton>
-      ))}
-    </ToggleButtonGroup>
+    <View direction="row" gap={2} wrap>
+      <Badge
+        variant="outline"
+        color={isAllSelected ? 'primary' : 'neutral'}
+        highlighted={isAllSelected}
+        onClick={() => handleFilterClick(null)}
+      >
+        All
+      </Badge>
+      {designSystems.map((system) => {
+        const isSelected = activeFilters.includes(system.id);
+        return (
+          <Badge
+            key={system.id}
+            variant="outline"
+            color={isSelected ? 'primary' : 'neutral'}
+            highlighted={isSelected}
+            onClick={() => handleFilterClick(system.id)}
+          >
+            {system.name}
+          </Badge>
+        );
+      })}
+    </View>
   );
 }

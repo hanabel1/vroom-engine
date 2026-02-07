@@ -22,6 +22,6 @@
   ["textarea", "text area"],
   ["slider", "range", "range input", "range slider", "rangeinput", "input range"],
   ["search", "search field", "search bar", "search input", "search box"],
-  ["rate", "rating", "star rating", "ratings", "star rating", "star meter"],
-  ["radio", "radio button", "radio input", "radio button group", "radio button group", "radio button group", "radio button group", "radio buttons", "optionbutton", "radipgroup", "radip group", "radipinput", "radios"]
+  ["rate", "rating", "ratings", "star rating", "star meter"],
+  ["radio", "radio button", "radio input", "radio button group", "radio buttons", "optionbutton", "radipgroup", "radip group", "radipinput", "radios"]
 ]

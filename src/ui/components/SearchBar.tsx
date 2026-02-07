@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { TextField, Button } from 'reshaped';
 
 interface SearchBarProps {
   onSearch: (query: string) => void;
@@ -26,21 +27,17 @@ export function SearchBar({ onSearch, placeholder = 'Search components or props.
 
   return (
     <div className="search-bar">
-      <input
-        type="text"
+      <TextField
+        name="search"
         className="search-input"
         value={value}
-        onChange={(e) => setValue(e.target.value)}
+        onChange={({ event, name, value }) => setValue(value)}
         placeholder={placeholder}
       />
       {value && (
-        <button
-          className="search-clear"
-          onClick={handleClear}
-          aria-label="Clear search"
-        >
+        <Button variant="ghost" size="sm" onClick={handleClear} aria-label="Clear search">
           ×
-        </button>
+        </Button>
       )}
       {resultCount !== undefined && (
         <div className="search-results-count">

@@ -1,26 +1,28 @@
 import { defineConfig } from 'vite';
-import path from 'path';
+import path from 'node:path';
+import { viteSingleFile } from 'vite-plugin-singlefile';
+import react from '@vitejs/plugin-react';
 
-export default defineConfig({
+// https://vitejs.dev/config/
+export default defineConfig(({ mode }) => ({
+  plugins: [react(), viteSingleFile()],
+  root: path.resolve('src'),
   build: {
-    outDir: 'dist',
+    minify: mode === 'production',
+    cssMinify: mode === 'production',
+    // sourcemap: mode !== "production" ? "inline" : false,
+    sourcemap: false,
     emptyOutDir: false,
-    lib: {
-      entry: path.resolve(__dirname, 'src/plugin/main.ts'),
-      name: 'plugin',
-      fileName: () => 'plugin.js',
-      formats: ['iife'],
-    },
+    outDir: path.resolve('dist'),
     rollupOptions: {
-      output: {
-        extend: true,
-      },
+      input: path.resolve('src/plugin.html'),
     },
   },
   resolve: {
     alias: {
-      '@/plugin': path.resolve(__dirname, 'src/plugin'),
+      '@/ui': path.resolve(__dirname, 'src/ui'),
       '@/shared': path.resolve(__dirname, 'src/shared'),
+      '@/catalog': path.resolve(__dirname, 'src/catalog'),
     },
   },
-});
+}));

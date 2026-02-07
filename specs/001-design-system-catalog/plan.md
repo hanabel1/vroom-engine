@@ -1,131 +1,136 @@
-# Implementation Plan: Design System Catalog Figma Plugin
+# Implementation Plan: Converter Hardening for Extracted Catalog HTML
 
-**Branch**: `001-design-system-catalog` | **Date**: 2026-02-07 | **Spec**: [spec.md](./spec.md)
-**Input**: Feature specification from `/specs/001-design-system-catalog/spec.md`
+**Branch**: `001-design-system-catalog` | **Date**: 2026-02-07 | **Spec**: [spec.md](spec.md)
+**Input**: Analysis findings from `/speckit.analyze` -- converter crashes when placing extracted components
+**Prerequisite**: Extraction pipeline (T001-T025) is complete. This plan covers converter fixes needed before T026 (e2e validation).
 
 ## Summary
 
-Build a Figma plugin that provides a searchable catalog of UI components from multiple public design systems (MUI, Adobe Spectrum, Tailwind UI). The plugin uses Fuse.js for fuzzy search in a React UI iframe, displays component previews in search results, and converts pre-stored HTML markup into native Figma layers upon placement. Catalog data is stored as JSON files with pre-processed inline-styled HTML, added manually by technical contributors.
+The Playwright-based extraction pipeline is complete and produces catalog JSON with fully resolved inline styles via `getComputedStyle()`. However, the HTML-to-Figma converter (`src/plugin/converter/`) crashes when processing this output because `getComputedStyle` returns longhand CSS properties and zero/keyword values that the converter does not handle. This plan hardens the converter to work with extracted HTML, unblocking FR-008 (visual fidelity) and T026 (e2e validation).
 
 ## Technical Context
 
 **Language/Version**: TypeScript 5.x (strict mode)
-**Primary Dependencies**: React 18, Fuse.js 7.x, Vite 5.x, vite-plugin-singlefile, @figma/plugin-typings
-**Storage**: Static JSON files bundled with the plugin (one per design system)
-**Testing**: Vitest (unit + integration)
-**Target Platform**: Figma Plugin API (latest stable) — desktop + web
-**Project Type**: Single project (Figma plugin with dual-context: UI iframe + main thread)
-**Performance Goals**: Search <100ms for 500+ components; component placement <3s
-**Constraints**: Bundle <5MB uncompressed (constitution); no Node.js APIs; all styles must be pre-inlined in catalog HTML; no runtime network requests needed
-**Scale/Scope**: 3 design systems, ~60-100 components total at launch, 1 plugin UI screen + detail view
+**Primary Dependencies**: React 18, Fuse.js 7.x, Vite 5.x, vite-plugin-singlefile, @figma/plugin-typings 1.123.0
+**Storage**: JSON files in `src/catalog/`
+**Testing**: Vitest for unit tests
+**Target Platform**: Figma Plugin API (sandbox + iframe)
+**Project Type**: Single (Figma plugin)
+**Performance Goals**: Place any catalog component in under 2 seconds
+**Constraints**: Plugin bundle < 5MB. All Figma API calls inside sandbox thread. No Node.js APIs.
+**Scale/Scope**: 15 components across 3 design systems, extensible to 50+
 
 ## Constitution Check
 
-*GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
-
-| Principle | Status | Evidence |
-|-----------|--------|----------|
-| **I. Plugin-Architecture-Driven** | PASS | UI in iframe (React), Figma API in main thread, `postMessage` bridge. No capabilities outside plugin sandbox. |
-| **II. Prototype-Fast Delivery** | PASS | MVP focuses on search + display (P1). Placement (P2) targets "visually recognizable" not pixel-perfect. No premature abstractions. |
-| **III. Designer-Centric UX** | PASS | Search by component name. No HTML/React jargon in UI. Visual previews. One-click placement. |
-| **IV. Minimal Dependencies** | PASS | 2 runtime deps (React, Fuse.js). Fuse.js: ~5KB gzip, zero deps — justified for fuzzy search (no platform alternative). React: mandated by constitution. vite-plugin-singlefile: dev-only. |
-| **V. Incremental Testability** | PASS | Each user story is independently demonstrable. P1 (search) works standalone. Tests added per constitution: critical path first. |
-
-**Post-Phase 1 Re-check:**
+*GATE: Must pass before implementation. Re-checked post-design.*
 
 | Principle | Status | Notes |
-|-----------|--------|-------|
-| **I. Plugin-Architecture-Driven** | PASS | Message protocol defined. No cross-boundary violations. |
-| **II. Prototype-Fast Delivery** | PASS | No over-engineered patterns. Flat data model. Direct function calls. |
-| **III. Designer-Centric UX** | PASS | Component names + categories + visual previews. No technical terminology in search results. |
-| **IV. Minimal Dependencies** | PASS | No new runtime deps added during design. Dependency count: React + Fuse.js only. |
-| **V. Incremental Testability** | PASS | Each layer testable in isolation (search logic, converter, message bridge). |
+|---|---|---|
+| I. Plugin-Architecture-Driven | PASS | All converter code runs in the Figma sandbox. No new architecture changes. |
+| II. Prototype-Fast Delivery | PASS | Fixes target specific identified bugs. No premature abstraction -- each fix is the simplest correction. |
+| III. Designer-Centric UX | **FIXING VIOLATION** | Analysis found placement is broken (empty frames, console errors). These fixes restore visual fidelity required by FR-008. |
+| IV. Minimal Dependencies | PASS | No new dependencies. All fixes are to existing code. |
+| V. Incremental Testability | PASS | Each fix can be tested by placing a specific component in Figma. T026 validates end-to-end. |
+
+## Problem Analysis (from `/speckit.analyze`)
+
+### Root Cause Chain
+
+```
+Extractor (Playwright) → getComputedStyle → always returns longhand CSS
+  e.g. border-top-width: 1px, min-width: 0px, max-width: none
+       ↓
+Style parser (styles.ts) → parseUnit("none") → 0, parseUnit("0px") → 0
+       ↓
+Mapper (mapper.ts) → frame.minWidth = 0 → Figma API THROWS
+  "minWidth cannot be set to 0, use null to unset"
+       ↓
+applyAutoLayoutSizing throws BEFORE children loop
+       ↓
+figma.createFrame() already placed root frame on canvas
+       ↓
+Result: empty frame on canvas, no children, PLACEMENT_ERROR
+```
+
+### Figma API Constraints (from research)
+
+From `@figma/plugin-typings` v1.123.0:
+
+```typescript
+minWidth: number | null  // Value must be POSITIVE. Set to null to remove.
+maxWidth: number | null  // Value must be POSITIVE. Set to null to remove.
+minHeight: number | null // Value must be POSITIVE. Set to null to remove.
+maxHeight: number | null // Value must be POSITIVE. Set to null to remove.
+```
+
+- 0 is NOT positive → throws
+- `null` means "no constraint"
+- Only applicable to auto-layout frames and their direct children
+- `layoutMode` must be set BEFORE these properties
 
 ## Project Structure
 
-### Documentation (this feature)
+### Files Modified (this plan)
+
+```text
+src/plugin/converter/
+├── styles.ts             # Fix parseUnit, add border longhand parsing
+├── parser.ts             # Add SVG skip tags
+└── mapper.ts             # Guard min/max setters, error resilience
+```
+
+### Files Created (this plan)
 
 ```text
 specs/001-design-system-catalog/
-├── plan.md              # This file
-├── research.md          # Phase 0: Fuse.js, Figma API, HTML-to-Figma, catalog design
-├── data-model.md        # Phase 1: Catalog schema (DesignSystem, Component, Prop, Variant)
-├── quickstart.md        # Phase 1: Setup, dev workflow, adding design systems
-├── contracts/
-│   ├── message-protocol.md   # UI ↔ Plugin postMessage contract
-│   └── catalog-schema.json   # JSON Schema for catalog data files
-└── tasks.md             # Phase 2 output (/speckit.tasks)
+└── contracts/
+    └── converter-api.md  # New: documents supported CSS properties
 ```
 
-### Source Code (repository root)
+### Existing (unchanged)
 
 ```text
-src/
-├── plugin/                      # Figma main thread (no DOM)
-│   ├── main.ts                  # Entry: message handler, orchestration
-│   └── converter/               # HTML → Figma node converter
-│       ├── index.ts             # Public API: htmlToFigma()
-│       ├── parser.ts            # DOMParser-based HTML parsing
-│       ├── mapper.ts            # Element → Figma node type mapping
-│       └── styles.ts            # Inline CSS → Figma property mapping
-│
-├── ui/                          # React UI iframe
-│   ├── index.html               # HTML entry for iframe
-│   ├── main.tsx                 # React entry
-│   ├── App.tsx                  # Root: search layout + routing (list/detail)
-│   ├── components/
-│   │   ├── SearchBar.tsx        # Text input with debounce
-│   │   ├── ResultsList.tsx      # Grid of result cards
-│   │   ├── ResultCard.tsx       # Preview image + name + design system badge
-│   │   └── DetailView.tsx       # Props, variants, place button
-│   ├── hooks/
-│   │   ├── useSearch.ts         # Fuse.js index + search function
-│   │   └── usePluginMessage.ts  # postMessage send/receive
-│   └── types/
-│       ├── catalog.ts           # DesignSystem, Component, Prop, Variant
-│       └── messages.ts          # Message type union
-│
-├── shared/
-│   └── types.ts                 # Message envelope type
-│
-└── catalog/                     # Bundled catalog data
-    ├── mui-v5.json
-    ├── spectrum.json
-    ├── tailwind-ui.json
-    └── previews/
-        ├── mui-v5/
-        ├── spectrum/
-        └── tailwind-ui/
-
-tools/                           # Build-time only (not shipped)
-└── process-components/
-    ├── render.ts                # Headless browser rendering
-    ├── inline-styles.ts         # CSS inlining
-    └── screenshot.ts            # Preview generation
-
-tests/
-├── unit/
-│   ├── search.test.ts           # Fuse.js config + ranking
-│   ├── converter.test.ts        # HTML → Figma mapping
-│   └── styles.test.ts           # CSS property conversion
-└── integration/
-    └── catalog-validation.test.ts  # Schema validation
-
-manifest.json                    # Figma plugin manifest
-vite.config.ts                   # UI build config
-vite.config.plugin.ts            # Plugin main thread build config
-tsconfig.json
-package.json
+tools/extract-catalog/    # Extraction pipeline -- complete, no changes
+src/catalog/*.json        # Extracted catalog data -- no changes
+src/ui/                   # Plugin UI -- no changes
+src/canvas.ts             # Plugin entry point -- no changes
 ```
 
-**Structure Decision**: Single project structure. The Figma plugin is a self-contained application with two build targets (UI iframe + plugin main thread) sharing TypeScript types. No backend, no separate packages. The `tools/` directory is for build-time catalog processing only and is not part of the plugin bundle.
+## Fix Inventory
+
+### Fix 1: `parseUnit` must handle CSS keywords (CRITICAL)
+
+**File**: `src/plugin/converter/styles.ts`
+**Problem**: `parseUnit('none')`, `parseUnit('auto')`, `parseUnit('normal')` all return `0` via `parseFloat → NaN → 0`. This `0` propagates to Figma API setters that reject it.
+**Fix**: Return `undefined` for non-numeric keywords. Change return type to `number | undefined`. Update all callers to handle `undefined`.
+**Affected properties**: `min-width`, `min-height`, `max-width`, `max-height`, `gap`, `width`, `height`
+
+### Fix 2: Guard Figma API min/max setters (CRITICAL)
+
+**File**: `src/plugin/converter/mapper.ts`
+**Problem**: `frame.minWidth = 0` throws. Even after Fix 1, some extracted values may legitimately be `0` (e.g., `min-width: 0px`).
+**Fix**: Guard all four setters: `frame.minWidth = val != null && val > 0 ? val : null`. Wrap `applyAutoLayoutSizing` in try-catch so a single property failure doesn't prevent children from being created.
+
+### Fix 3: Parse border longhand CSS properties (HIGH)
+
+**File**: `src/plugin/converter/styles.ts`
+**Problem**: Extracted HTML uses `border-top-width: 2px; border-top-style: solid; border-top-color: rgb(...)` (longhand from `getComputedStyle`). The parser only handles `border-width` and `border` shorthands. All border styling is silently dropped.
+**Fix**: Add cases for `border-top-width`, `border-right-width`, `border-bottom-width`, `border-left-width`, `border-top-color` (etc.), and `border-top-style` (etc.). Use the max of all four widths for `borderWidth` (Figma uses uniform stroke weight). Use first non-transparent color for `borderColor`. Only apply if at least one style is `solid`.
+
+### Fix 4: Skip SVG elements in classifier (MEDIUM)
+
+**File**: `src/plugin/converter/parser.ts`
+**Problem**: `<svg>`, `<path>`, `<circle>`, `<rect>`, `<line>`, `<polyline>`, `<polygon>` elements from MUI Alert icons are converted to empty frames.
+**Fix**: Add these tag names to `skipTags` set in `classifyElement`.
+
+### Fix 5: Fix `shouldRenderAsFrame` truthiness check (MEDIUM)
+
+**File**: `src/plugin/converter/mapper.ts`
+**Problem**: `shouldRenderAsFrame` uses `Boolean(styles.minWidth || ...)`. Since `0` is falsy, `minWidth: 0` won't trigger frame rendering even though it's an explicit value.
+**Fix**: Use explicit `!== undefined` checks for all numeric properties.
 
 ## Complexity Tracking
 
-No constitution violations to justify.
-
-| Dependency | Justification |
-|------------|---------------|
-| `fuse.js` | ~5KB gzip, zero transitive deps. Implements Bitap fuzzy matching algorithm — no equivalent in browser built-ins or Figma API. Required for FR-002 (typo-tolerant search). |
-| `react` + `react-dom` | Mandated by constitution Technical Constraints. |
-| `vite-plugin-singlefile` | Dev dependency only. Figma requires UI as single HTML file — this plugin inlines all JS/CSS into the HTML. Not in production bundle. |
+| Violation | Why Needed | Simpler Alternative Rejected Because |
+|---|---|---|
+| None | All fixes are minimal, targeted changes to existing code | N/A |

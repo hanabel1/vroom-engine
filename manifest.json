@@ -1,0 +1,11 @@
+{
+  "name": "Design System Catalog",
+  "id": "vroom-engine-design-system-catalog",
+  "api": "1.0.0",
+  "main": "dist/plugin.js",
+  "ui": "dist/index.html",
+  "editorType": ["figma"],
+  "networkAccess": {
+    "allowedDomains": ["none"]
+  }
+}

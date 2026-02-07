@@ -19,12 +19,12 @@
 
 **Purpose**: Project initialization, build tooling, and Figma plugin scaffold
 
-- [ ] T001 Initialize project with package.json — add dependencies: react, react-dom, fuse.js, and dev dependencies: typescript, vite, vite-plugin-singlefile, @figma/plugin-typings, @types/react, @types/react-dom in package.json
-- [ ] T002 Configure TypeScript strict mode in tsconfig.json with paths for src/plugin, src/ui, src/shared
-- [ ] T003 [P] Create Vite config for UI iframe build (React + singlefile inlining) in vite.config.ts
-- [ ] T004 [P] Create Vite config for plugin main thread build (IIFE, no DOM) in vite.config.plugin.ts
-- [ ] T005 [P] Create Figma plugin manifest with plugin name, entry points (dist/plugin.js, dist/ui.html), editorType figma, networkAccess none in manifest.json
-- [ ] T006 Add npm scripts to package.json: dev (watch both builds), build (production both builds), validate-catalog
+- [X] T001 Initialize project with package.json — add dependencies: react, react-dom, fuse.js, and dev dependencies: typescript, vite, vite-plugin-singlefile, @figma/plugin-typings, @types/react, @types/react-dom in package.json
+- [X] T002 Configure TypeScript strict mode in tsconfig.json with paths for src/plugin, src/ui, src/shared
+- [X] T003 [P] Create Vite config for UI iframe build (React + singlefile inlining) in vite.config.ts
+- [X] T004 [P] Create Vite config for plugin main thread build (IIFE, no DOM) in vite.config.plugin.ts
+- [X] T005 [P] Create Figma plugin manifest with plugin name, entry points (dist/plugin.js, dist/ui.html), editorType figma, networkAccess none in manifest.json
+- [X] T006 Add npm scripts to package.json: dev (watch both builds), build (production both builds), validate-catalog
 
 ---
 
@@ -34,16 +34,16 @@
 
 **CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T007 Define TypeScript types for catalog data model (DesignSystem, Component, ComponentProp, PropValue, ComponentVariant, Category enum) in src/ui/types/catalog.ts
-- [ ] T008 [P] Define TypeScript types for message protocol (PluginMessage union type with PLUGIN_READY, CATALOG_DATA, PLACE_COMPONENT, PLACEMENT_STARTED, PLACEMENT_COMPLETE, PLACEMENT_ERROR) in src/ui/types/messages.ts
-- [ ] T009 [P] Define shared message envelope type (PluginMessage base interface) in src/shared/types.ts
-- [ ] T010 Implement usePluginMessage hook — wraps window.onmessage listener and parent.postMessage sender with typed message handlers in src/ui/hooks/usePluginMessage.ts
-- [ ] T011 Create plugin main thread entry — figma.showUI, listen for PLUGIN_READY, load catalog JSON files from bundled data, send CATALOG_DATA response in src/plugin/main.ts
-- [ ] T012 Create seed catalog data for MUI with at least 5 components (Button, TextField, Card, Chip, Alert) with pre-inlined HTML, props, aliases, and preview placeholder images in src/catalog/mui-v5.json
-- [ ] T013 [P] Create seed catalog data for Spectrum with at least 5 components (Button, TextField, Card, Badge, Dialog) in src/catalog/spectrum.json
-- [ ] T014 [P] Create seed catalog data for Tailwind UI with at least 5 components (Button, Input, Card, Badge, Alert) in src/catalog/tailwind-ui.json
-- [ ] T015 Create UI HTML entry point that loads the React app in src/ui/index.html
-- [ ] T016 Create React entry point (ReactDOM.createRoot, render App) in src/ui/main.tsx
+- [X] T007 Define TypeScript types for catalog data model (DesignSystem, Component, ComponentProp, PropValue, ComponentVariant, Category enum) in src/ui/types/catalog.ts
+- [X] T008 [P] Define TypeScript types for message protocol (PluginMessage union type with PLUGIN_READY, CATALOG_DATA, PLACE_COMPONENT, PLACEMENT_STARTED, PLACEMENT_COMPLETE, PLACEMENT_ERROR) in src/ui/types/messages.ts
+- [X] T009 [P] Define shared message envelope type (PluginMessage base interface) in src/shared/types.ts
+- [X] T010 Implement usePluginMessage hook — wraps window.onmessage listener and parent.postMessage sender with typed message handlers in src/ui/hooks/usePluginMessage.ts
+- [X] T011 Create plugin main thread entry — figma.showUI, listen for PLUGIN_READY, load catalog JSON files from bundled data, send CATALOG_DATA response in src/plugin/main.ts
+- [X] T012 Create seed catalog data for MUI with at least 5 components (Button, TextField, Card, Chip, Alert) with pre-inlined HTML, props, aliases, and preview placeholder images in src/catalog/mui-v5.json
+- [X] T013 [P] Create seed catalog data for Spectrum with at least 5 components (Button, TextField, Card, Badge, Dialog) in src/catalog/spectrum.json
+- [X] T014 [P] Create seed catalog data for Tailwind UI with at least 5 components (Button, Input, Card, Badge, Alert) in src/catalog/tailwind-ui.json
+- [X] T015 Create UI HTML entry point that loads the React app in src/ui/index.html
+- [X] T016 Create React entry point (ReactDOM.createRoot, render App) in src/ui/main.tsx
 
 **Checkpoint**: Plugin loads in Figma, UI iframe renders, catalog data flows from plugin to UI via postMessage
 
@@ -57,12 +57,12 @@
 
 ### Implementation for User Story 1
 
-- [ ] T017 [US1] Implement useSearch hook — initialize Fuse.js index from catalog data with weighted keys (name: 2.0, aliases: 1.5, category: 0.8, designSystem: 0.5, props.name: 0.7), threshold 0.4, includeScore, includeMatches. Expose search(query) function with debounce. Return flattened component results with their designSystem reference in src/ui/hooks/useSearch.ts
-- [ ] T018 [P] [US1] Implement SearchBar component — text input with 250ms debounce, clear button, placeholder text "Search components or props...", calls onSearch callback. Show result count badge in src/ui/components/SearchBar.tsx
-- [ ] T019 [P] [US1] Implement ResultCard component — displays component preview image, component name, design system name badge, category label. Accepts onClick handler for detail navigation and onPlace handler for direct placement in src/ui/components/ResultCard.tsx
-- [ ] T020 [US1] Implement ResultsList component — renders grid of ResultCard components from search results. Groups or labels results by design system. Shows "No results found" with similar term suggestions when empty. Shows popular/featured components when query is empty in src/ui/components/ResultsList.tsx
-- [ ] T021 [US1] Implement App root component — layout with SearchBar at top, ResultsList below. Wire useSearch hook to SearchBar onChange, pass results to ResultsList. On CATALOG_DATA message, flatten all components and pass to useSearch for indexing. Handle loading state while catalog loads in src/ui/App.tsx
-- [ ] T022 [US1] Add basic CSS styling for plugin UI — search bar, result cards grid, design system badges, preview images, empty state, loading state. Keep minimal and designer-friendly (no raw HTML/code visible) in src/ui/styles.css (imported by main.tsx)
+- [X] T017 [US1] Implement useSearch hook — initialize Fuse.js index from catalog data with weighted keys (name: 2.0, aliases: 1.5, category: 0.8, designSystem: 0.5, props.name: 0.7), threshold 0.4, includeScore, includeMatches. Expose search(query) function with debounce. Return flattened component results with their designSystem reference in src/ui/hooks/useSearch.ts
+- [X] T018 [P] [US1] Implement SearchBar component — text input with 250ms debounce, clear button, placeholder text "Search components or props...", calls onSearch callback. Show result count badge in src/ui/components/SearchBar.tsx
+- [X] T019 [P] [US1] Implement ResultCard component — displays component preview image, component name, design system name badge, category label. Accepts onClick handler for detail navigation and onPlace handler for direct placement in src/ui/components/ResultCard.tsx
+- [X] T020 [US1] Implement ResultsList component — renders grid of ResultCard components from search results. Groups or labels results by design system. Shows "No results found" with similar term suggestions when empty. Shows popular/featured components when query is empty in src/ui/components/ResultsList.tsx
+- [X] T021 [US1] Implement App root component — layout with SearchBar at top, ResultsList below. Wire useSearch hook to SearchBar onChange, pass results to ResultsList. On CATALOG_DATA message, flatten all components and pass to useSearch for indexing. Handle loading state while catalog loads in src/ui/App.tsx
+- [X] T022 [US1] Add basic CSS styling for plugin UI — search bar, result cards grid, design system badges, preview images, empty state, loading state. Keep minimal and designer-friendly (no raw HTML/code visible) in src/ui/styles.css (imported by main.tsx)
 
 **Checkpoint**: US1 complete — search works with fuzzy matching, results display with previews, prop search works, empty/no-results states handled. Plugin is a functional catalog browser.
 
@@ -76,14 +76,14 @@
 
 ### Implementation for User Story 2
 
-- [ ] T023 [P] [US2] Implement CSS inline style parser — parse style attribute string into key-value object, handle shorthand properties (border, padding, margin), normalize units (px, rem, em → pixels) in src/plugin/converter/styles.ts
-- [ ] T024 [P] [US2] Implement CSS color parser utility — convert hex (#fff, #ffffff), rgb(), rgba(), named colors to Figma {r, g, b} (0-1 range) format. Include opacity extraction from rgba in src/plugin/converter/styles.ts (color section)
-- [ ] T025 [US2] Implement HTML parser — use DOMParser (available in plugin sandbox) to parse HTML string, walk DOM tree recursively, classify elements as frame (div, section, button, etc.), text (span, p, h1-h6, text nodes), or skip in src/plugin/converter/parser.ts
-- [ ] T026 [US2] Implement element-to-Figma-node mapper — map div/section/button → createFrame with Auto Layout (flex-direction → layoutMode, justify-content → primaryAxisAlignMode, align-items → counterAxisAlignMode, gap → itemSpacing, padding → padding*). Map text elements → createText with loadFontAsync (fallback to Inter). Apply fills, strokes, cornerRadius, effects, opacity, resize from parsed styles in src/plugin/converter/mapper.ts
-- [ ] T027 [US2] Implement htmlToFigma public entry point — accept HTML string, call parser then mapper recursively, wrap result in a named ComponentNode. Return the created node. Include try-catch with warnings array for partial failures in src/plugin/converter/index.ts
-- [ ] T028 [US2] Wire PLACE_COMPONENT message handler in plugin main thread — on PLACE_COMPONENT message: send PLACEMENT_STARTED, call htmlToFigma with the HTML payload, append result to current page or selected frame, select and scroll into view, send PLACEMENT_COMPLETE with warnings. On error: send PLACEMENT_ERROR. Update src/plugin/main.ts
-- [ ] T029 [US2] Add "Place" button to ResultCard component — sends PLACE_COMPONENT message via usePluginMessage with component HTML. Show loading spinner during placement. Show success toast or warning notification on PLACEMENT_COMPLETE/PLACEMENT_ERROR. Update src/ui/components/ResultCard.tsx
-- [ ] T030 [US2] Handle no-artboard-selected edge case — when no frame is selected, create a new frame at canvas origin (0,0) and place component inside it. Add to src/plugin/converter/index.ts
+- [X] T023 [P] [US2] Implement CSS inline style parser — parse style attribute string into key-value object, handle shorthand properties (border, padding, margin), normalize units (px, rem, em → pixels) in src/plugin/converter/styles.ts
+- [X] T024 [P] [US2] Implement CSS color parser utility — convert hex (#fff, #ffffff), rgb(), rgba(), named colors to Figma {r, g, b} (0-1 range) format. Include opacity extraction from rgba in src/plugin/converter/styles.ts (color section)
+- [X] T025 [US2] Implement HTML parser — use DOMParser (available in plugin sandbox) to parse HTML string, walk DOM tree recursively, classify elements as frame (div, section, button, etc.), text (span, p, h1-h6, text nodes), or skip in src/plugin/converter/parser.ts
+- [X] T026 [US2] Implement element-to-Figma-node mapper — map div/section/button → createFrame with Auto Layout (flex-direction → layoutMode, justify-content → primaryAxisAlignMode, align-items → counterAxisAlignMode, gap → itemSpacing, padding → padding*). Map text elements → createText with loadFontAsync (fallback to Inter). Apply fills, strokes, cornerRadius, effects, opacity, resize from parsed styles in src/plugin/converter/mapper.ts
+- [X] T027 [US2] Implement htmlToFigma public entry point — accept HTML string, call parser then mapper recursively, wrap result in a named ComponentNode. Return the created node. Include try-catch with warnings array for partial failures in src/plugin/converter/index.ts
+- [X] T028 [US2] Wire PLACE_COMPONENT message handler in plugin main thread — on PLACE_COMPONENT message: send PLACEMENT_STARTED, call htmlToFigma with the HTML payload, append result to current page or selected frame, select and scroll into view, send PLACEMENT_COMPLETE with warnings. On error: send PLACEMENT_ERROR. Update src/plugin/main.ts
+- [X] T029 [US2] Add "Place" button to ResultCard component — sends PLACE_COMPONENT message via usePluginMessage with component HTML. Show loading spinner during placement. Show success toast or warning notification on PLACEMENT_COMPLETE/PLACEMENT_ERROR. Update src/ui/components/ResultCard.tsx
+- [X] T030 [US2] Handle no-artboard-selected edge case — when no frame is selected, create a new frame at canvas origin (0,0) and place component inside it. Add to src/plugin/converter/index.ts
 
 **Checkpoint**: US2 complete — components can be placed from search results as editable Figma layers. Visual fidelity is "recognizable" for common components (buttons, cards, inputs). Conversion warnings shown to user.
 
@@ -126,9 +126,9 @@
 
 **Purpose**: Improvements that affect multiple user stories
 
-- [ ] T038 Add empty catalog handling — if no JSON files found in catalog directory, show friendly message in UI: "No design systems loaded. See documentation to add catalog data." in src/ui/App.tsx
-- [ ] T039 [P] Add keyboard navigation — arrow keys to navigate search results, Enter to open detail or place, Escape to close detail view, focus management for accessibility in src/ui/App.tsx
-- [ ] T040 Verify bundle size is under 5MB uncompressed — run build and check dist/ output sizes. If over limit, identify and resolve (tree-shake, remove unused catalog data, optimize preview images)
+- [X] T038 Add empty catalog handling — if no JSON files found in catalog directory, show friendly message in UI: "No design systems loaded. See documentation to add catalog data." in src/ui/App.tsx
+- [X] T039 [P] Add keyboard navigation — arrow keys to navigate search results, Enter to open detail or place, Escape to close detail view, focus management for accessibility in src/ui/App.tsx
+- [X] T040 Verify bundle size is under 5MB uncompressed — run build and check dist/ output sizes. If over limit, identify and resolve (tree-shake, remove unused catalog data, optimize preview images)
 - [ ] T041 Run quickstart.md validation — follow all steps in specs/001-design-system-catalog/quickstart.md end-to-end and verify they work
 
 ---

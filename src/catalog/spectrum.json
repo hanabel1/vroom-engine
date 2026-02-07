@@ -1,0 +1,54 @@
+{
+  "id": "spectrum",
+  "name": "Adobe Spectrum",
+  "version": "2.0",
+  "description": "Adobe's design system for creating intuitive, consistent experiences",
+  "sourceUrl": "https://spectrum.adobe.com/",
+  "components": [
+    {
+      "id": "button",
+      "name": "Button",
+      "aliases": ["btn", "action"],
+      "description": "Buttons allow users to perform an action.",
+      "category": "input",
+      "previewUrl": "previews/spectrum/button.png",
+      "html": "<button style=\"display: inline-flex; align-items: center; justify-content: center; padding: 5px 14px; font-family: adobe-clean, sans-serif; font-size: 14px; font-weight: 400; line-height: 18px; color: #ffffff; background-color: #1473e6; border: 2px solid #1473e6; border-radius: 16px; cursor: pointer; min-height: 32px; transition: background-color 130ms ease-in-out, border-color 130ms ease-in-out;\">Button</button>"
+    },
+    {
+      "id": "textfield",
+      "name": "TextField",
+      "aliases": ["input", "text-input"],
+      "description": "Text fields allow users to input text.",
+      "category": "input",
+      "previewUrl": "previews/spectrum/textfield.png",
+      "html": "<div style=\"display: inline-flex; flex-direction: column; position: relative; font-family: adobe-clean, sans-serif; min-width: 200px;\"><input style=\"border: 1px solid #747474; border-radius: 4px; padding: 5px 12px; font-size: 14px; line-height: 18px; color: #2c2c2c; background-color: #ffffff; min-height: 32px; box-sizing: border-box; transition: border-color 130ms ease-in-out, box-shadow 130ms ease-in-out;\" placeholder=\"Placeholder\" /></div>"
+    },
+    {
+      "id": "card",
+      "name": "Card",
+      "aliases": ["panel"],
+      "description": "Cards contain content and actions about a single subject.",
+      "category": "surface",
+      "previewUrl": "previews/spectrum/card.png",
+      "html": "<div style=\"background-color: #ffffff; border: 1px solid #d3d3d3; border-radius: 4px; padding: 24px; box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15); min-width: 200px;\"><h3 style=\"margin: 0 0 12px 0; font-family: adobe-clean, sans-serif; font-weight: 700; font-size: 18px; line-height: 22px; color: #2c2c2c;\">Card Title</h3><p style=\"margin: 0; font-family: adobe-clean, sans-serif; font-size: 14px; line-height: 18px; color: #6e6e6e;\">Card content goes here</p></div>"
+    },
+    {
+      "id": "badge",
+      "name": "Badge",
+      "aliases": ["tag", "label"],
+      "description": "Badges are used to label or categorize items.",
+      "category": "display",
+      "previewUrl": "previews/spectrum/badge.png",
+      "html": "<div style=\"display: inline-flex; align-items: center; justify-content: center; padding: 0 8px; height: 20px; font-family: adobe-clean, sans-serif; font-size: 11px; font-weight: 400; line-height: 20px; color: #2c2c2c; background-color: #e3e3e3; border-radius: 10px;\">Badge</div>"
+    },
+    {
+      "id": "dialog",
+      "name": "Dialog",
+      "aliases": ["modal", "popup"],
+      "description": "Dialogs display important information that users need to acknowledge.",
+      "category": "feedback",
+      "previewUrl": "previews/spectrum/dialog.png",
+      "html": "<div style=\"background-color: #ffffff; border-radius: 4px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25); padding: 32px; min-width: 288px; max-width: 480px;\"><h2 style=\"margin: 0 0 16px 0; font-family: adobe-clean, sans-serif; font-weight: 700; font-size: 24px; line-height: 28px; color: #2c2c2c;\">Dialog Title</h2><p style=\"margin: 0 0 24px 0; font-family: adobe-clean, sans-serif; font-size: 14px; line-height: 18px; color: #6e6e6e;\">This is the dialog content.</p><div style=\"display: flex; justify-content: flex-end; gap: 8px;\"><button style=\"padding: 5px 14px; font-family: adobe-clean, sans-serif; font-size: 14px; color: #2c2c2c; background-color: #f5f5f5; border: 2px solid #d3d3d3; border-radius: 16px; cursor: pointer;\">Cancel</button><button style=\"padding: 5px 14px; font-family: adobe-clean, sans-serif; font-size: 14px; color: #ffffff; background-color: #1473e6; border: 2px solid #1473e6; border-radius: 16px; cursor: pointer;\">Confirm</button></div></div>"
+    }
+  ]
+}

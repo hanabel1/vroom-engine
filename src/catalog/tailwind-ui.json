@@ -1,0 +1,54 @@
+{
+  "id": "tailwind-ui",
+  "name": "Tailwind UI",
+  "version": "3.0",
+  "description": "Beautiful UI components built with Tailwind CSS",
+  "sourceUrl": "https://tailwindui.com/",
+  "components": [
+    {
+      "id": "button",
+      "name": "Button",
+      "aliases": ["btn", "cta"],
+      "description": "Buttons allow users to take actions with a single click.",
+      "category": "input",
+      "previewUrl": "previews/tailwind-ui/button.png",
+      "html": "<button style=\"display: inline-flex; align-items: center; justify-content: center; padding: 8px 16px; font-family: ui-sans-serif, system-ui, sans-serif; font-size: 14px; font-weight: 500; line-height: 20px; color: #ffffff; background-color: #4f46e5; border: 1px solid transparent; border-radius: 6px; cursor: pointer; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); transition: background-color 150ms ease-in-out;\">Button</button>"
+    },
+    {
+      "id": "input",
+      "name": "Input",
+      "aliases": ["textfield", "text-input"],
+      "description": "Text input field for user data entry.",
+      "category": "input",
+      "previewUrl": "previews/tailwind-ui/input.png",
+      "html": "<input style=\"display: block; width: 100%; padding: 8px 12px; font-family: ui-sans-serif, system-ui, sans-serif; font-size: 14px; line-height: 20px; color: #111827; background-color: #ffffff; border: 1px solid #d1d5db; border-radius: 6px; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); transition: border-color 150ms ease-in-out, box-shadow 150ms ease-in-out; min-width: 200px;\" placeholder=\"Enter text\" />"
+    },
+    {
+      "id": "card",
+      "name": "Card",
+      "aliases": ["panel", "container"],
+      "description": "Cards group related content and actions.",
+      "category": "surface",
+      "previewUrl": "previews/tailwind-ui/card.png",
+      "html": "<div style=\"background-color: #ffffff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 24px; box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06); min-width: 200px;\"><h3 style=\"margin: 0 0 8px 0; font-family: ui-sans-serif, system-ui, sans-serif; font-weight: 600; font-size: 18px; line-height: 28px; color: #111827;\">Card Title</h3><p style=\"margin: 0; font-family: ui-sans-serif, system-ui, sans-serif; font-size: 14px; line-height: 20px; color: #6b7280;\">Card content goes here with some descriptive text.</p></div>"
+    },
+    {
+      "id": "badge",
+      "name": "Badge",
+      "aliases": ["tag", "label"],
+      "description": "Badges highlight important information or status.",
+      "category": "display",
+      "previewUrl": "previews/tailwind-ui/badge.png",
+      "html": "<span style=\"display: inline-flex; align-items: center; padding: 2px 10px; font-family: ui-sans-serif, system-ui, sans-serif; font-size: 12px; font-weight: 500; line-height: 18px; color: #1f2937; background-color: #f3f4f6; border-radius: 12px;\">Badge</span>"
+    },
+    {
+      "id": "alert",
+      "name": "Alert",
+      "aliases": ["notification", "message"],
+      "description": "Alerts communicate important information to users.",
+      "category": "feedback",
+      "previewUrl": "previews/tailwind-ui/alert.png",
+      "html": "<div style=\"display: flex; padding: 16px; background-color: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 8px; font-family: ui-sans-serif, system-ui, sans-serif;\"><div style=\"flex-shrink: 0; width: 20px; height: 20px; color: #10b981; margin-right: 12px;\">✓</div><div style=\"flex: 1;\"><h3 style=\"margin: 0 0 4px 0; font-size: 14px; font-weight: 500; line-height: 20px; color: #065f46;\">Success</h3><p style=\"margin: 0; font-size: 14px; line-height: 20px; color: #047857;\">Your changes have been saved successfully.</p></div></div>"
+    }
+  ]
+}

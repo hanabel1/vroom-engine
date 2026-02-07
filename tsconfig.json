@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "allowImportingTsExtensions": true,
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "skipLibCheck": true,
+    "jsx": "react-jsx",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/plugin/*": ["src/plugin/*"],
+      "@/ui/*": ["src/ui/*"],
+      "@/shared/*": ["src/shared/*"],
+      "@/catalog/*": ["src/catalog/*"]
+    }
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx", "tools/**/*.ts"],
+  "exclude": ["node_modules", "dist"]
+}

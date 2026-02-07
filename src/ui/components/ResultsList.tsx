@@ -133,8 +133,8 @@ export function ResultsList() {
         <View align="center" paddingBlock={4}>
           <Pagination
             page={currentPage}
+            total={totalPages}
             onChange={(args) => useAppStore.getState().setCurrentPage(args.page)}
-            count={totalPages}
             previousAriaLabel="Previous page"
             nextAriaLabel="Next page"
           />

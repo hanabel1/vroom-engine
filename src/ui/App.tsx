@@ -1,19 +1,19 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { usePluginMessage } from './hooks/usePluginMessage';
 import { useSearch } from './hooks/useSearch';
 import { SearchBar } from './components/SearchBar';
 import { ResultsList } from './components/ResultsList';
-import type { DesignSystem } from './types/catalog';
+import { useAppStore } from '@/ui/store';
 import type { PluginMessage } from './types/messages';
 
 function App() {
-  const [catalogData, setCatalogData] = useState<DesignSystem[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  // Read catalog state from store
+  const catalogData = useAppStore((s) => s.designSystems);
+  const isLoading = useAppStore((s) => s.isLoading);
 
   const handleMessage = useCallback((message: PluginMessage) => {
     if (message.type === 'CATALOG_DATA') {
-      setCatalogData(message.payload.designSystems);
-      setIsLoading(false);
+      useAppStore.getState().setCatalogData(message.payload.designSystems);
     } else if (message.type === 'PLACEMENT_COMPLETE') {
       // Show success notification
       console.log('Component placed:', message.payload.nodeName);

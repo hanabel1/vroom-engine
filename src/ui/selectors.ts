@@ -80,3 +80,24 @@ export function useFilteredComponents(): SearchableComponent[] {
     return components;
   }, [designSystems, enabledSystemIds, activeFilters]);
 }
+
+/**
+ * Returns the list of design systems available for filter chips.
+ * Each system includes id and name for rendering.
+ * Memoized — recomputes only when designSystems changes.
+ */
+export interface DesignSystemOption {
+  id: string;
+  name: string;
+}
+
+export function useDesignSystemOptions(): DesignSystemOption[] {
+  const designSystems = useAppStore((state) => state.designSystems);
+
+  return useMemo(() => {
+    return designSystems.map((ds) => ({
+      id: ds.id,
+      name: ds.name,
+    }));
+  }, [designSystems]);
+}

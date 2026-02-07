@@ -1,28 +1,35 @@
 import { useState, useEffect } from 'react';
 import { TextField, Button } from 'reshaped';
+import { useAppStore } from '@/ui/store';
+
+const SearchIcon = (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <circle cx="11" cy="11" r="8" />
+    <path d="m21 21-4.35-4.35" />
+  </svg>
+);
 
 interface SearchBarProps {
-  onSearch: (query: string) => void;
   placeholder?: string;
-  resultCount?: number;
 }
 
 const DEBOUNCE_MS = 250;
 
-export function SearchBar({ onSearch, placeholder = 'Search components or props...', resultCount }: SearchBarProps) {
+export function SearchBar({ placeholder = 'Search components...' }: SearchBarProps) {
   const [value, setValue] = useState('');
 
-  // Debounce search
+  // Debounce search and sync to store
   useEffect(() => {
     const timer = setTimeout(() => {
-      onSearch(value);
+      useAppStore.getState().setSearchQuery(value);
     }, DEBOUNCE_MS);
 
     return () => clearTimeout(timer);
-  }, [value, onSearch]);
+  }, [value]);
 
   const handleClear = () => {
     setValue('');
+    useAppStore.getState().setSearchQuery('');
   };
 
   return (
@@ -31,18 +38,14 @@ export function SearchBar({ onSearch, placeholder = 'Search components or props.
         name="search"
         className="search-input"
         value={value}
-        onChange={({ event, name, value }) => setValue(value)}
+        onChange={({ value }) => setValue(value)}
         placeholder={placeholder}
+        icon={SearchIcon}
       />
       {value && (
-        <Button variant="ghost" size="sm" onClick={handleClear} aria-label="Clear search">
+        <Button variant="ghost" size="small" onClick={handleClear} aria-label="Clear search">
           ×
         </Button>
-      )}
-      {resultCount !== undefined && (
-        <div className="search-results-count">
-          {resultCount} {resultCount === 1 ? 'result' : 'results'}
-        </div>
       )}
     </div>
   );

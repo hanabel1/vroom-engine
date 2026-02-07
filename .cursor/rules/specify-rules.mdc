@@ -1,0 +1,31 @@
+# vroom-engine Development Guidelines
+
+Auto-generated from all feature plans. Last updated: 2026-02-07
+
+## Active Technologies
+- N/A — in-memory only, session-scoped. Alias database is a static JSON file bundled at build time. (003-catalog-search)
+
+- TypeScript 5.5+ (strict mode) + React 18.3 (existing), Zustand 5.x (existing), Fuse.js 7.x (existing), Reshaped 3.9+ (existing) (003-catalog-search)
+
+## Project Structure
+
+```text
+src/
+tests/
+```
+
+## Commands
+
+npm test && npm run lint
+
+## Code Style
+
+TypeScript 5.5+ (strict mode): Follow standard conventions
+
+## Recent Changes
+- 003-catalog-search: Added TypeScript 5.5+ (strict mode) + React 18.3 (existing), Zustand 5.x (existing), Fuse.js 7.x (existing), Reshaped 3.9+ (existing)
+
+- 003-catalog-search: Added TypeScript 5.5+ (strict mode) + React 18.3 (existing), Zustand 5.x (existing), Fuse.js 7.x (existing), Reshaped 3.9+ (existing)
+
+<!-- MANUAL ADDITIONS START -->
+<!-- MANUAL ADDITIONS END -->

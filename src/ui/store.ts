@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { DesignSystem, Component } from '@/ui/types/catalog';
+import type { DesignSystem } from '@/ui/types/catalog';
 
 // ============================================================================
 // Store Interface
@@ -18,10 +18,12 @@ export interface AppStore {
   activeComponent: { id: string; designSystemId: string } | null;
   searchQuery: string;
   activeFilters: string[];
+  currentPage: number;
   setView: (view: AppStore['view']) => void;
   setActiveComponent: (comp: AppStore['activeComponent']) => void;
   setSearchQuery: (query: string) => void;
   setActiveFilters: (filters: string[]) => void;
+  setCurrentPage: (page: number) => void;
   openDetail: (componentId: string, designSystemId: string) => void;
   goBack: () => void;
 
@@ -69,15 +71,18 @@ export const useAppStore = create<AppStore>()((set) => ({
   activeComponent: null,
   searchQuery: '',
   activeFilters: [],
+  currentPage: 1,
 
   // -- UI slice actions --
   setView: (view) => set({ view }),
 
   setActiveComponent: (comp) => set({ activeComponent: comp }),
 
-  setSearchQuery: (query) => set({ searchQuery: query }),
+  setSearchQuery: (query) => set({ searchQuery: query, currentPage: 1 }),
 
-  setActiveFilters: (filters) => set({ activeFilters: filters }),
+  setActiveFilters: (filters) => set({ activeFilters: filters, currentPage: 1 }),
+
+  setCurrentPage: (page) => set({ currentPage: page }),
 
   openDetail: (componentId, designSystemId) =>
     set({

@@ -1,0 +1,63 @@
+{
+  "id": "mock-ds2",
+  "name": "Mock DS2",
+  "version": "2.0",
+  "description": "Mock design system for testing search functionality",
+  "sourceUrl": "https://example.com/mock-ds2",
+  "components": [
+    {
+      "id": "primary-btn",
+      "name": "PrimaryButton",
+      "aliases": ["button", "cta", "action-button"],
+      "description": "Primary button for main actions",
+      "category": "input",
+      "previewUrl": "previews/mock-ds2/primary-btn.png",
+      "html": "<div>this is mock</div>"
+    },
+    {
+      "id": "text-input",
+      "name": "TextInput",
+      "aliases": ["textfield", "input", "form-field"],
+      "description": "Text input field",
+      "category": "input",
+      "previewUrl": "previews/mock-ds2/text-input.png",
+      "html": "<div>this is mock</div>"
+    },
+    {
+      "id": "listbox",
+      "name": "Listbox",
+      "aliases": ["dropdown", "select", "picker"],
+      "description": "Dropdown selection component",
+      "category": "input",
+      "previewUrl": "previews/mock-ds2/listbox.png",
+      "html": "<div>this is mock</div>"
+    },
+    {
+      "id": "overlay-dialog",
+      "name": "OverlayDialog",
+      "aliases": ["dialog", "modal", "popup"],
+      "description": "Modal dialog component",
+      "category": "feedback",
+      "previewUrl": "previews/mock-ds2/overlay-dialog.png",
+      "html": "<div>this is mock</div>"
+    },
+    {
+      "id": "tab-bar",
+      "name": "TabBar",
+      "aliases": ["tabs", "segmented-control"],
+      "description": "Tabbed navigation component",
+      "category": "navigation",
+      "previewUrl": "previews/mock-ds2/tab-bar.png",
+      "html": "<div>this is mock</div>"
+    },
+    {
+      "id": "hint",
+      "name": "Hint",
+      "aliases": ["tooltip", "info-tip"],
+      "description": "Contextual help tooltip",
+      "category": "display",
+      "previewUrl": "previews/mock-ds2/hint.png",
+      "html": "<div>this is mock</div>"
+    }
+  ]
+}

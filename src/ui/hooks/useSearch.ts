@@ -1,6 +1,10 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useMemo } from 'react';
 import Fuse from 'fuse.js';
-import type { DesignSystem, Component } from '../types/catalog';
+import { useAppStore } from '@/ui/store';
+import { useFilteredComponents } from '@/ui/selectors';
+import { createAliasResolver } from '@/ui/services/aliasResolver';
+import aliasGroups from '@/catalog/aliases.json';
+import type { Component } from '../types/catalog';
 
 export interface SearchableComponent extends Component {
   designSystemId: string;
@@ -11,6 +15,7 @@ export interface SearchResult {
   item: SearchableComponent;
   score?: number;
   matches?: readonly Fuse.FuseResultMatch[];
+  matchedViaAlias?: boolean;
 }
 
 const FUSE_OPTIONS: Fuse.IFuseOptions<SearchableComponent> = {
@@ -29,49 +34,92 @@ const FUSE_OPTIONS: Fuse.IFuseOptions<SearchableComponent> = {
   shouldSort: true,
 };
 
-export function useSearch(catalogData: DesignSystem[]) {
-  const [query, setQuery] = useState('');
+// Create alias resolver instance once
+const aliasResolver = createAliasResolver(aliasGroups);
 
-  // Flatten all components from all design systems
-  const searchableComponents = useMemo(() => {
-    const components: SearchableComponent[] = [];
-    
-    for (const designSystem of catalogData) {
-      for (const component of designSystem.components) {
-        components.push({
-          ...component,
-          designSystemId: designSystem.id,
-          designSystemName: designSystem.name,
-        });
-      }
-    }
-    
-    return components;
-  }, [catalogData]);
+// Constants
+const PAGE_SIZE = 8;
+
+export function useSearch() {
+  // Read search query and pagination state from store
+  const query = useAppStore((state) => state.searchQuery);
+  const currentPage = useAppStore((state) => state.currentPage);
+
+  // Get filtered components from selector (handles enabledSystemIds + activeFilters)
+  const searchableComponents = useFilteredComponents();
 
   // Create Fuse index
   const fuse = useMemo(() => {
     return new Fuse(searchableComponents, FUSE_OPTIONS);
   }, [searchableComponents]);
 
-  // Search function
+  // Search function with alias expansion
   const results = useMemo(() => {
     if (!query.trim()) {
       // Return all components when no query
-      return searchableComponents.map(item => ({ item }));
+      return searchableComponents.map((item) => ({ item }));
     }
-    
-    return fuse.search(query);
+
+    // Get expanded terms from alias resolver
+    const expandedTerms = aliasResolver.expandQuery(query);
+
+    // Run search for original query
+    const queryResults = fuse.search(query);
+
+    // Run search for each expanded term (if different from original)
+    const allResults: Fuse.FuseResult<SearchableComponent>[] = [...queryResults];
+
+    for (const term of expandedTerms) {
+      if (term.toLowerCase() !== query.toLowerCase()) {
+        const termResults = fuse.search(term);
+        allResults.push(...termResults);
+      }
+    }
+
+    // Deduplicate by component identity (designSystemId + componentId)
+    // Keep the best (lowest) score for each component
+    const deduplicatedMap = new Map<string, SearchResult>();
+
+    for (const fuseResult of allResults) {
+      const key = `${fuseResult.item.designSystemId}:${fuseResult.item.id}`;
+      const existingResult = deduplicatedMap.get(key);
+
+      const score = fuseResult.score ?? 0;
+
+      if (!existingResult || (existingResult.score ?? 0) > score) {
+        deduplicatedMap.set(key, {
+          item: fuseResult.item,
+          score: fuseResult.score,
+          matches: fuseResult.matches,
+          matchedViaAlias: expandedTerms.length > 1, // Mark if alias expansion occurred
+        });
+      }
+    }
+
+    // Convert map to array and sort by score
+    return Array.from(deduplicatedMap.values()).sort((a, b) => {
+      const scoreA = a.score ?? 0;
+      const scoreB = b.score ?? 0;
+      return scoreA - scoreB; // Lower score = better match
+    });
   }, [query, fuse, searchableComponents]);
 
-  const search = useCallback((newQuery: string) => {
-    setQuery(newQuery);
-  }, []);
+  // Pagination logic
+  const totalPages = Math.ceil(results.length / PAGE_SIZE);
+  const clampedPage = Math.max(1, Math.min(currentPage, totalPages || 1));
+
+  const paginatedResults = useMemo(() => {
+    const startIndex = (clampedPage - 1) * PAGE_SIZE;
+    const endIndex = startIndex + PAGE_SIZE;
+    return results.slice(startIndex, endIndex);
+  }, [results, clampedPage]);
 
   return {
     query,
-    search,
     results,
     totalResults: results.length,
+    paginatedResults,
+    totalPages,
+    currentPage: clampedPage,
   };
 }

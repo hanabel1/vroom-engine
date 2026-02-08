@@ -115,15 +115,17 @@ export function ResultsList() {
         </Text>
       </View>
 
-      {/* Results grid - 2 columns */}
+      {/* Results grid - 2 columns; fixed-height wrapper so all cards same size */}
       <Grid columns={2} gap={3}>
         {paginatedResults.map((result) => (
           <Grid.Item key={`${result.item.designSystemId}-${result.item.id}`}>
-            <ResultCard
-              component={result.item}
-              onClick={() => handleComponentClick(result.item.id, result.item.designSystemId)}
-              onPlace={() => handleComponentPlace(result.item.id, result.item.designSystemId, result.item.html)}
-            />
+            <div className="result-card-wrapper">
+              <ResultCard
+                component={result.item}
+                onClick={() => handleComponentClick(result.item.id, result.item.designSystemId)}
+                onPlace={() => handleComponentPlace(result.item.id, result.item.designSystemId, result.item.html)}
+              />
+            </div>
           </Grid.Item>
         ))}
       </Grid>

@@ -39,7 +39,7 @@ function App() {
   // Send PLUGIN_READY on mount
   useEffect(() => {
     sendPluginMessage({ type: 'PLUGIN_READY' });
-  }, [sendMessage]);
+  }, []);
 
   // Keyboard navigation
   useEffect(() => {

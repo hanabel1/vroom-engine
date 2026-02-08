@@ -4,11 +4,16 @@
 import muiCatalog from '@/catalog/mui-v5.json';
 import spectrumCatalog from '@/catalog/spectrum.json';
 import tailwindCatalog from '@/catalog/tailwind-ui.json';
-import mockDs1Catalog from '@/catalog/mock-ds1.json';
-import mockDs2Catalog from '@/catalog/mock-ds2.json';
-import mockDs3Catalog from '@/catalog/mock-ds3.json';
-import mockDs4Catalog from '@/catalog/mock-ds4.json';
-import mockDs5Catalog from '@/catalog/mock-ds5.json';
+import antDesignCatalog from '@/catalog/ant-design-html.json';
+import ariaKitCatalog from '@/catalog/ariakit-html.json';
+import carbonCatalog from '@/catalog/carbon-design-system-html.json';
+import chakraCatalog from '@/catalog/chakra-ui-html.json';
+import mantineCatalog from '@/catalog/mantine-html.json';
+// import mockDs1Catalog from '@/catalog/mock-ds1.json';
+// import mockDs2Catalog from '@/catalog/mock-ds2.json';
+// import mockDs3Catalog from '@/catalog/mock-ds3.json';
+// import mockDs4Catalog from '@/catalog/mock-ds4.json';
+// import mockDs5Catalog from '@/catalog/mock-ds5.json';
 
 import type { DesignSystem } from '@/ui/types/catalog';
 import { mapElementToFigmaNode, type ConversionWarning } from '@/plugin/converter/mapper';
@@ -22,11 +27,16 @@ function loadCatalogData(): DesignSystem[] {
       muiCatalog as DesignSystem,
       spectrumCatalog as DesignSystem,
       tailwindCatalog as DesignSystem,
-      mockDs1Catalog as DesignSystem,
-      mockDs2Catalog as DesignSystem,
-      mockDs3Catalog as DesignSystem,
-      mockDs4Catalog as DesignSystem,
-      mockDs5Catalog as DesignSystem,
+      antDesignCatalog as DesignSystem,
+      ariaKitCatalog as DesignSystem,
+      carbonCatalog as DesignSystem,
+      chakraCatalog as DesignSystem,
+      mantineCatalog as DesignSystem,
+      // mockDs1Catalog as DesignSystem,
+      // mockDs2Catalog as DesignSystem,
+      // mockDs3Catalog as DesignSystem,
+      // mockDs4Catalog as DesignSystem,
+      // mockDs5Catalog as DesignSystem,
     );
   } catch (error) {
     console.error('Failed to load catalog data:', error);

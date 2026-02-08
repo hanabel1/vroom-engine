@@ -88,11 +88,7 @@ function App() {
   }
 
   if (view === 'detail') {
-    return (
-      <div className="container">
-        <ComponentDetail />
-      </div>
-    );
+    return <ComponentDetail />;
   }
 
   return (

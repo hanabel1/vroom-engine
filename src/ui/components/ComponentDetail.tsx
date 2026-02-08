@@ -2,11 +2,16 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { View, Text, Button } from 'reshaped';
 import { useActiveComponent } from '@/ui/selectors';
 import { useAppStore } from '@/ui/store';
-import { usePluginMessage } from '@/ui/hooks/usePluginMessage';
 import { HtmlPreview } from './HtmlPreview';
 import { parseHTMLInUI } from '@/ui/utils/parseHtml';
 import { copyToClipboard } from '@/ui/utils/copyToClipboard';
 import type { Component, ComponentProp, ComponentVariant, PropType } from '@/ui/types/catalog';
+import type { UIMessage } from '@/ui/types/messages';
+
+// Direct sendMessage function to avoid hook import issues
+function sendPluginMessage(message: UIMessage) {
+  parent.postMessage({ pluginMessage: message }, '*');
+}
 
 const STATE_TABS = ['Default', 'Hover', 'Focus', 'Disabled'] as const;
 
@@ -78,7 +83,6 @@ export function ComponentDetail() {
   const activeRef = useAppStore((s) => s.activeComponent);
   const placementStatus = useAppStore((s) => s.placementStatus);
   const placementError = useAppStore((s) => s.placementError);
-  const { sendMessage } = usePluginMessage(() => {});
 
   const [activeStateTab, setActiveStateTab] = useState<(typeof STATE_TABS)[number]>('Default');
   const [selectedProps, setSelectedProps] = useState<Record<string, string>>({});
@@ -128,12 +132,12 @@ export function ComponentDetail() {
     const parsed = parseHTMLInUI(currentHtml);
     if (!parsed) return;
     useAppStore.getState().startPlacement();
-    sendMessage({
+    sendPluginMessage({
       type: 'PLACE_COMPONENT',
       payload: { designSystemId, componentId, parsedElement: parsed },
       requestId: `${Date.now()}-${Math.random()}`,
     });
-  }, [currentHtml, designSystemId, componentId, sendMessage]);
+  }, [currentHtml, designSystemId, componentId]);
 
   const handleCopySource = useCallback(() => {
     if (!currentHtml) return;

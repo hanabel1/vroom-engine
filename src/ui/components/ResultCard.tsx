@@ -71,7 +71,7 @@ export function ResultCard({ component, matches }: ResultCardProps) {
         {/* Place button slides from bottom on hover */}
         <div className="result-card-button-container">
           <Button fullWidth variant="solid" color="primary" size="small" onClick={handlePlace}>
-            Place
+            + Place on Canvas
           </Button>
         </div>
       </div>

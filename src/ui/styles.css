@@ -352,6 +352,7 @@ body {
   flex-shrink: 0;
 }
 
+<<<<<<< HEAD
 /* ----- HtmlPreview (detail + thumbnails) ----- */
 .html-preview {
   position: relative;
@@ -584,3 +585,10 @@ body {
   accent-color: #0066ff;
 }
 
+/* Search highlighting */
+.search-highlight {
+  background-color: rgba(59, 130, 246, 0.15);
+  border-radius: 2px;
+  padding: 0 2px;
+  font-weight: inherit;
+}

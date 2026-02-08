@@ -22,7 +22,7 @@ function App() {
     const handleMessage = (event: MessageEvent) => {
       const message = event.data.pluginMessage as PluginMessage;
       if (!message) return;
-      
+
       if (message.type === 'CATALOG_DATA') {
         useAppStore.getState().setCatalogData(message.payload.designSystems);
       } else if (message.type === 'PLACEMENT_COMPLETE') {
@@ -97,11 +97,10 @@ function App() {
 
   return (
     <div className="container">
-      <div className="header">
-        <h1>Design System Catalog</h1>
+      <div className="search-header">
+        <SearchBar />
+        <FilterChips />
       </div>
-      <SearchBar />
-      <FilterChips />
       <ResultsList />
     </div>
   );

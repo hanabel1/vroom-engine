@@ -1,14 +1,16 @@
 // Figma plugin main thread entry point
 
 // Import catalog data files
-import muiCatalog from '@/catalog/mui-v5.json';
-import spectrumCatalog from '@/catalog/spectrum.json';
-import tailwindCatalog from '@/catalog/tailwind-ui.json';
-import mockDs1Catalog from '@/catalog/mock-ds1.json';
-import mockDs2Catalog from '@/catalog/mock-ds2.json';
-import mockDs3Catalog from '@/catalog/mock-ds3.json';
-import mockDs4Catalog from '@/catalog/mock-ds4.json';
-import mockDs5Catalog from '@/catalog/mock-ds5.json';
+import antCatalog from '@/catalog/ant-design-html.json';
+import tailwindCatalog from '@/catalog/tailwind-ui-html.json';
+import ariakitCatalog from '@/catalog/ariakit-html.json';
+import chakraCatalog from '@/catalog/chakra-ui-html.json';
+import materialCatalog from '@/catalog/material-ui-html.json';
+import spectrumCatalog from '@/catalog/spectrum-html.json';
+import mantineCatalog from '@/catalog/mantine-html.json';
+import geistCatalog from '@/catalog/geist-design-system-html.json';
+import carbonCatalog from '@/catalog/carbon-design-system-html.json';
+import atlassianCatalog from '@/catalog/atlassian-design-system-html.json';
 
 import type { DesignSystem } from '@/ui/types/catalog';
 import { mapElementToFigmaNode, type ConversionWarning } from '@/plugin/converter/mapper';
@@ -30,14 +32,16 @@ function loadCatalogData(): DesignSystem[] {
 
   try {
     catalogs.push(
-      transformCatalog(muiCatalog),
-      transformCatalog(spectrumCatalog),
+      transformCatalog(antCatalog),
       transformCatalog(tailwindCatalog),
-      transformCatalog(mockDs1Catalog),
-      transformCatalog(mockDs2Catalog),
-      transformCatalog(mockDs3Catalog),
-      transformCatalog(mockDs4Catalog),
-      transformCatalog(mockDs5Catalog),
+      transformCatalog(ariakitCatalog),
+      transformCatalog(chakraCatalog),
+      transformCatalog(materialCatalog),
+      transformCatalog(spectrumCatalog),
+      transformCatalog(mantineCatalog),
+      transformCatalog(geistCatalog),
+      transformCatalog(carbonCatalog),
+      transformCatalog(atlassianCatalog),
     );
   } catch (error) {
     console.error('Failed to load catalog data:', error);

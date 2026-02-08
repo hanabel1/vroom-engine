@@ -5,7 +5,8 @@ import { useAppStore } from '@/ui/store';
 import { usePluginMessage } from '@/ui/hooks/usePluginMessage';
 import { HtmlPreview } from './HtmlPreview';
 import { parseHTMLInUI } from '@/ui/utils/parseHtml';
-import type { Component, ComponentProp, PropType } from '@/ui/types/catalog';
+import { copyToClipboard } from '../utils/copyToClipboard';
+import type { Component, ComponentProp, ComponentVariant, PropType } from '@/ui/types/catalog';
 
 const STATE_TABS = ['Default', 'Hover', 'Focus', 'Disabled'] as const;
 
@@ -22,20 +23,40 @@ function getDefaultPropValues(props: ComponentProp[] | undefined): Record<string
 
 function findVariantHtml(component: Component, selectedProps: Record<string, string>): string | undefined {
   if (!component.variants?.length) return undefined;
+  let best: ComponentVariant | null = null;
+  let bestScore = 0;
   for (const v of component.variants) {
+    if (!v.html) continue;
     let match = true;
+    let score = 0;
     for (const [k, val] of Object.entries(v.props)) {
       if (selectedProps[k] !== val) {
         match = false;
         break;
       }
+      score += 1;
     }
-    if (match && v.html) return v.html;
+    if (match && score > bestScore) {
+      bestScore = score;
+      best = v;
+    }
   }
-  return undefined;
+  return best?.html;
 }
 
-function generateJsx(componentName: Component['name'], props: Record<string, string>): string {
+function findVariantHtmlByState(component: Component, state: string): string | undefined {
+  if (!component.variants?.length) return undefined;
+  const stateLower = state.toLowerCase();
+  const v = component.variants.find(
+    (x) =>
+      x.name.toLowerCase() === stateLower ||
+      (x.props && (x.props.state === state || x.props.state === stateLower))
+  );
+  return v?.html;
+}
+
+/** Generate JSX snippet using the catalog component name (e.g. Button, TextField, Card). */
+function generateJsx(componentName: string, props: Record<string, string>): string {
   const attrs = Object.entries(props)
     .filter(([, v]) => v !== undefined && v !== '')
     .map(([k, v]) => {
@@ -44,9 +65,11 @@ function generateJsx(componentName: Component['name'], props: Record<string, str
       if (/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(v)) return `${k}={${v}}`;
       return `${k}="${v}"`;
     })
-    .filter(Boolean)
-    .join(' ');
-  return `<${componentName} ${attrs}>\n  …\n</${componentName}>`;
+    .filter(Boolean);
+  const name = componentName || 'Component';
+  if (attrs.length === 0) return `<${name} />`;
+  const attrsStr = attrs.join(' ');
+  return `<${name} ${attrsStr}>\n  …\n</${name}>`;
 }
 
 export function ComponentDetail() {
@@ -58,19 +81,42 @@ export function ComponentDetail() {
 
   const [activeStateTab, setActiveStateTab] = useState<(typeof STATE_TABS)[number]>('Default');
   const [selectedProps, setSelectedProps] = useState<Record<string, string>>({});
-
-  useEffect(() => {
-    if (component) setSelectedProps(getDefaultPropValues(component.props));
-  }, [component, activeRef?.id, activeRef?.designSystemId]);
+  const [copyFeedback, setCopyFeedback] = useState<'code' | 'source' | null>(null);
 
   const designSystemId = activeRef?.designSystemId ?? '';
   const componentId = activeRef?.id ?? '';
 
   const currentHtml = useMemo(() => {
     if (!component) return '';
-    const variantHtml = findVariantHtml(component, selectedProps);
-    return variantHtml ?? component.html;
-  }, [component, selectedProps]);
+
+    if (activeStateTab === 'Disabled') {
+      const previewProps = { ...selectedProps, disabled: 'true' };
+      return (
+        findVariantHtml(component, previewProps) ??
+        findVariantHtmlByState(component, 'disabled') ??
+        component.html
+      );
+    }
+    if (activeStateTab === 'Hover') {
+      return (
+        findVariantHtmlByState(component, 'hover') ??
+        findVariantHtml(component, selectedProps) ??
+        component.html
+      );
+    }
+    if (activeStateTab === 'Focus') {
+      return (
+        findVariantHtmlByState(component, 'focus') ??
+        findVariantHtml(component, selectedProps) ??
+        component.html
+      );
+    }
+    return findVariantHtml(component, selectedProps) ?? component.html;
+  }, [component, selectedProps, activeStateTab]);
+
+  useEffect(() => {
+    if (component) setSelectedProps(getDefaultPropValues(component.props));
+  }, [component, activeRef?.id, activeRef?.designSystemId]);
 
   const updateProp = useCallback((name: string, value: string) => {
     setSelectedProps((prev) => ({ ...prev, [name]: value }));
@@ -90,28 +136,35 @@ export function ComponentDetail() {
 
   const handleCopySource = useCallback(() => {
     if (!currentHtml) return;
-    navigator.clipboard.writeText(currentHtml);
+    if (copyToClipboard(currentHtml)) {
+      setCopyFeedback('source');
+      setTimeout(() => setCopyFeedback(null), 1500);
+    }
   }, [currentHtml]);
 
   const handleCopyCode = useCallback(() => {
     if (!component) return;
-    const code = generateJsx(component.name, selectedProps);
-    navigator.clipboard.writeText(code);
-  }, [component, selectedProps]);
+    const propsForCode = activeStateTab === 'Disabled' ? { ...selectedProps, disabled: 'true' } : selectedProps;
+    const code = generateJsx(component.name, propsForCode);
+    if (copyToClipboard(code)) {
+      setCopyFeedback('code');
+      setTimeout(() => setCopyFeedback(null), 1500);
+    }
+  }, [component, selectedProps, activeStateTab]);
 
   if (!component || !activeRef) {
     return (
       <div className="component-detail">
         <div className="component-detail-header">
           <button
-          type="button"
-          className="component-detail-back"
-          onClick={() => {
-            useAppStore.getState().resetPlacement();
-            useAppStore.getState().goBack();
-          }}
-          aria-label="Back"
-        >
+            type="button"
+            className="component-detail-back"
+            onClick={() => {
+              useAppStore.getState().resetPlacement();
+              useAppStore.getState().goBack();
+            }}
+            aria-label="Back"
+          >
             ←
           </button>
           <Text variant="body-2">Component not found</Text>
@@ -120,7 +173,9 @@ export function ComponentDetail() {
     );
   }
 
-  const jsxCode = generateJsx(component.name, selectedProps);
+  const codeProps =
+    activeStateTab === 'Disabled' ? { ...selectedProps, disabled: 'true' } : selectedProps;
+  const jsxCode = generateJsx(component.name ?? component.id, codeProps);
 
   return (
     <div className="component-detail">
@@ -143,7 +198,15 @@ export function ComponentDetail() {
 
       <div className="component-detail-body">
         <section className="component-detail-section">
-          <HtmlPreview html={currentHtml} showDimensions />
+          <HtmlPreview
+            html={currentHtml}
+            showDimensions
+            previewState={
+              activeStateTab === 'Default'
+                ? undefined
+                : (activeStateTab.toLowerCase() as 'hover' | 'focus' | 'disabled')
+            }
+          />
         </section>
 
         <section className="component-detail-section">
@@ -182,9 +245,11 @@ export function ComponentDetail() {
           <h2 className="component-detail-section-title">Code</h2>
           <div className="component-detail-code-block">
             <button type="button" className="component-detail-code-copy" onClick={handleCopyCode}>
-              Copy
+              {copyFeedback === 'code' ? 'Copied!' : 'Copy'}
             </button>
-            {jsxCode}
+            <pre className="component-detail-code-pre" aria-label={`JSX for ${component.name}`}>
+              {jsxCode}
+            </pre>
           </div>
         </section>
 
@@ -194,7 +259,7 @@ export function ComponentDetail() {
               Place on Canvas
             </Button>
             <Button variant="outline" color="primary" size="small" onClick={handleCopySource}>
-              Copy Source
+              {copyFeedback === 'source' ? 'Copied!' : 'Copy Source'}
             </Button>
           </div>
           {placementStatus === 'placing' && (

@@ -1,16 +1,18 @@
 import { useEffect, useRef } from 'react';
-import { Card, View, Text, Badge, Button, Actionable } from 'reshaped';
+import { Card, View, Text, Badge, Actionable } from 'reshaped';
 import type { SearchableComponent } from '../hooks/useSearch';
+import type Fuse from 'fuse.js';
+import { HighlightedText } from './HighlightedText';
 
 interface ResultCardProps {
   component: SearchableComponent;
+  matches?: readonly Fuse.FuseResultMatch[];
   onClick?: () => void;
-  onPlace?: () => void;
 }
 
 const PREVIEW_PADDING = 16;
 
-export function ResultCard({ component, onClick, onPlace }: ResultCardProps) {
+export function ResultCard({ component, matches, onClick }: ResultCardProps) {
   const previewRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -37,15 +39,15 @@ export function ResultCard({ component, onClick, onPlace }: ResultCardProps) {
     return () => ro.disconnect();
   }, [component.html]);
 
-  const handlePlaceClick = (e: React.MouseEvent | React.KeyboardEvent) => {
-    e.stopPropagation();
-    if (onPlace) {
-      onPlace();
-    }
-  };
-
   const cardContent = (
     <View gap={3} className="result-card-content">
+      {/* Badge positioned absolutely at top-right */}
+      <span className="result-card-badge-positioned" title={component.designSystemName}>
+        <Badge color="neutral" size="small">
+          {component.designSystemName}
+        </Badge>
+      </span>
+
       <div className="result-card-preview-box">
         {component.html ? (
           <div
@@ -60,35 +62,19 @@ export function ResultCard({ component, onClick, onPlace }: ResultCardProps) {
         )}
       </div>
 
-      {/* Component info — name and badge truncate so long text doesn't push layout */}
+      {/* Component info — simplified without inline badge */}
       <View gap={2} className="result-card-info">
-        <View direction="row" align="center" justify="space-between" gap={2} className="result-card-title-row">
+        <View direction="row" align="center" gap={2} className="result-card-title-row">
           <span className="result-card-name" title={component.name}>
-            <Text variant="body-2" weight="bold">
-              {component.name}
+            <Text variant="body-2" weight="regular">
+              <HighlightedText text={component.name} matches={matches} fieldName="name" />
             </Text>
-          </span>
-          <span className="result-card-badge" title={component.designSystemName}>
-            <Badge color="neutral" size="small">
-              {component.designSystemName}
-            </Badge>
           </span>
         </View>
         <Text variant="caption-1" color="neutral">
           {component.category}
         </Text>
       </View>
-
-      {/* Place button */}
-      <Button
-        fullWidth
-        variant="solid"
-        color="primary"
-        size="small"
-        onClick={handlePlaceClick}
-      >
-        Place
-      </Button>
     </View>
   );
 

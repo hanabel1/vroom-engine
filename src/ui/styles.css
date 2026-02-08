@@ -345,6 +345,7 @@ body {
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 
 .result-card-info {
@@ -584,3 +585,23 @@ body {
   accent-color: #0066ff;
 }
 
+/* Search highlighting */
+.search-highlight {
+  background-color: rgba(59, 130, 246, 0.15);
+  border-radius: 2px;
+  padding: 0 2px;
+  font-weight: inherit;
+}
+
+/* Badge positioned at top-right of card */
+.result-card-badge-positioned {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 1;
+}
+
+/* Make card wrapper position relative for absolute badge */
+.result-card-wrapper > * {
+  position: relative;
+}

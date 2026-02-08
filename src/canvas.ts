@@ -1,14 +1,16 @@
 // Figma plugin main thread entry point
 
 // Import catalog data files
-import muiCatalog from '@/catalog/mui-v5.json';
-import spectrumCatalog from '@/catalog/spectrum.json';
-import tailwindCatalog from '@/catalog/tailwind-ui.json';
-import mockDs1Catalog from '@/catalog/mock-ds1.json';
-import mockDs2Catalog from '@/catalog/mock-ds2.json';
-import mockDs3Catalog from '@/catalog/mock-ds3.json';
-import mockDs4Catalog from '@/catalog/mock-ds4.json';
-import mockDs5Catalog from '@/catalog/mock-ds5.json';
+import antCatalog from '@/catalog/ant-design-html.json';
+import tailwindCatalog from '@/catalog/tailwind-ui-html.json';
+import ariakitCatalog from '@/catalog/ariakit-html.json';
+import chakraCatalog from '@/catalog/chakra-ui-html.json';
+import materialCatalog from '@/catalog/material-ui-html.json';
+import spectrumCatalog from '@/catalog/spectrum-html.json';
+import mantineCatalog from '@/catalog/mantine-html.json';
+import geistCatalog from '@/catalog/geist-design-system-html.json';
+import carbonCatalog from '@/catalog/carbon-design-system-html.json';
+import atlassianCatalog from '@/catalog/atlassian-design-system-html.json';
 
 import type { DesignSystem } from '@/ui/types/catalog';
 import { mapElementToFigmaNode, type ConversionWarning } from '@/plugin/converter/mapper';
@@ -17,16 +19,29 @@ import { mapElementToFigmaNode, type ConversionWarning } from '@/plugin/converte
 function loadCatalogData(): DesignSystem[] {
   const catalogs: DesignSystem[] = [];
 
+  // Helper to transform catalog JSON to DesignSystem
+  const transformCatalog = (catalog: any): DesignSystem => ({
+    id: catalog.systemId || catalog.id,
+    name: catalog.project || catalog.name,
+    version: catalog.reactVersion || catalog.version || '1.0.0',
+    description: catalog.description,
+    sourceUrl: catalog.sourceUrl,
+    logoUrl: catalog.logoUrl,
+    components: catalog.components || [],
+  });
+
   try {
     catalogs.push(
-      muiCatalog as DesignSystem,
-      spectrumCatalog as DesignSystem,
-      tailwindCatalog as DesignSystem,
-      mockDs1Catalog as DesignSystem,
-      mockDs2Catalog as DesignSystem,
-      mockDs3Catalog as DesignSystem,
-      mockDs4Catalog as DesignSystem,
-      mockDs5Catalog as DesignSystem,
+      transformCatalog(antCatalog),
+      transformCatalog(tailwindCatalog),
+      transformCatalog(ariakitCatalog),
+      transformCatalog(chakraCatalog),
+      transformCatalog(materialCatalog),
+      transformCatalog(spectrumCatalog),
+      transformCatalog(mantineCatalog),
+      transformCatalog(geistCatalog),
+      transformCatalog(carbonCatalog),
+      transformCatalog(atlassianCatalog),
     );
   } catch (error) {
     console.error('Failed to load catalog data:', error);
@@ -86,6 +101,15 @@ figma.ui.onmessage = async (msg) => {
           : figma.currentPage;
 
       parent.appendChild(node);
+
+      // Position at viewport center
+      const bounds = figma.viewport.bounds;
+      const centerX = bounds.x + bounds.width / 2;
+      const centerY = bounds.y + bounds.height / 2;
+
+      // Center the node at the viewport center
+      node.x = centerX - node.width / 2;
+      node.y = centerY - node.height / 2;
 
       // Select and scroll into view
       figma.currentPage.selection = [node];

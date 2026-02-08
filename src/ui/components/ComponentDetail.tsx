@@ -226,7 +226,7 @@ export function ComponentDetail() {
         )}
 
         {/* Code */}
-        <section className="detail-section" style={{ marginTop: 'auto' }}>
+        <section className="detail-section" style={{ marginTop: 'auto', padding: '0 16px 16px 16px' }}>
           <div className="detail-section-header">
             <h2 className="detail-section-title">Code</h2>
             <button type="button" className="detail-copy-link" onClick={handleCopyCode}>

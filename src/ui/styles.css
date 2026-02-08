@@ -12,7 +12,7 @@ body {
 }
 
 .container {
-  padding: 16px;
+  padding: 12px;
   max-width: 100%;
   display: flex;
   flex-direction: column;
@@ -106,6 +106,65 @@ body {
   color: #666;
 }
 
+.results-count {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  position: absolute;
+  right: 30px;
+  top: 20px;
+  z-index: 10;
+  overflow: hidden;
+  height: 40px;
+}
+
+.results-count-container {
+  position: relative;
+  display: inline-block;
+  min-width: 30px;
+  text-align: center;
+}
+
+.results-count-old {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  animation: slideDownBlur 0.3s ease-in forwards;
+}
+
+.results-count-new {
+  display: inline-block;
+  animation: fallNumber 0.3s ease-out;
+}
+
+@keyframes slideDownBlur {
+  0% {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+    filter: blur(0px);
+  }
+  100% {
+    transform: translateX(-50%) scale(1.2) translateY(30px);
+    opacity: 0;
+    filter: blur(6px);
+  }
+}
+
+@keyframes fallNumber {
+  0% {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
 /* Results List */
 .results-list {
   display: flex;
@@ -122,6 +181,33 @@ body {
   overflow-y: auto;
   overflow-x: hidden;
   padding-bottom: 16px;
+  position: relative;
+}
+
+.results-grid-scroll::before {
+  content: '';
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 24px;
+  background: linear-gradient(to bottom, white, transparent);
+  pointer-events: none;
+  z-index: 5;
+  display: block;
+}
+
+.results-grid-scroll::after {
+  content: '';
+  position: sticky;
+  bottom: -24px;
+  left: 0;
+  right: 0;
+  height: 24px;
+  background: linear-gradient(to top, white, transparent);
+  pointer-events: none;
+  z-index: 5;
+  display: block;
 }
 
 .results-group {
@@ -501,10 +587,37 @@ body {
   align-items: center;
   justify-content: center;
   color: #333;
+  overflow: hidden;
+  position: relative;
 }
 
-.detail-back:hover {
-  background-color: #f0f0f0;
+.detail-back svg {
+  transition:
+    transform 0.3s ease,
+    opacity 0.3s ease;
+}
+
+.detail-back:hover svg {
+  animation: slidePortal 0.6s ease-in-out;
+}
+
+@keyframes slidePortal {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  45% {
+    transform: translateX(-20px);
+    opacity: 0;
+  }
+  55% {
+    transform: translateX(20px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }
 
 /* -- Scrollable body -- */

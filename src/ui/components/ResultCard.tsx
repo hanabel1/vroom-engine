@@ -49,6 +49,13 @@ export function ResultCard({ component, matches, onClick, onPlace }: ResultCardP
 
   const cardContent = (
     <View gap={3} className="result-card-content">
+      {/* Badge positioned absolutely at top-right */}
+      <span className="result-card-badge-positioned" title={component.designSystemName}>
+        <Badge color="neutral" size="small">
+          {component.designSystemName}
+        </Badge>
+      </span>
+
       <div className="result-card-preview-box">
         {component.html ? (
           <div
@@ -63,18 +70,13 @@ export function ResultCard({ component, matches, onClick, onPlace }: ResultCardP
         )}
       </div>
 
-      {/* Component info — name and badge truncate so long text doesn't push layout */}
+      {/* Component info — simplified without inline badge */}
       <View gap={2} className="result-card-info">
-        <View direction="row" align="center" justify="space-between" gap={2} className="result-card-title-row">
+        <View direction="row" align="center" gap={2} className="result-card-title-row">
           <span className="result-card-name" title={component.name}>
             <Text variant="body-2" weight="bold">
               <HighlightedText text={component.name} matches={matches} fieldName="name" />
             </Text>
-          </span>
-          <span className="result-card-badge" title={component.designSystemName}>
-            <Badge color="neutral" size="small">
-              {component.designSystemName}
-            </Badge>
           </span>
         </View>
         <Text variant="caption-1" color="neutral">

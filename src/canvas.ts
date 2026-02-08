@@ -106,7 +106,7 @@ figma.ui.onmessage = async (msg) => {
       const bounds = figma.viewport.bounds;
       const centerX = bounds.x + bounds.width / 2;
       const centerY = bounds.y + bounds.height / 2;
-      
+
       // Center the node at the viewport center
       node.x = centerX - node.width / 2;
       node.y = centerY - node.height / 2;

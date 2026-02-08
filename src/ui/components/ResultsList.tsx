@@ -56,6 +56,7 @@ export function ResultsList() {
             <div className="result-card-wrapper">
               <ResultCard
                 component={result.item}
+                matches={result.matches}
                 onClick={() => handleComponentClick(result.item.id, result.item.designSystemId)}
                 onPlace={() => handleComponentPlace(result.item.id, result.item.designSystemId, result.item.html)}
               />

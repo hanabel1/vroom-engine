@@ -1,33 +1,44 @@
-import { useCallback, useEffect } from 'react';
-import { usePluginMessage } from './hooks/usePluginMessage';
+import { useEffect } from 'react';
 import { SearchBar } from './components/SearchBar';
 import { FilterChips } from './components/FilterChips';
 import { ResultsList } from './components/ResultsList';
 import { ComponentDetail } from './components/ComponentDetail';
 import { LoadingSkeleton } from './components/LoadingSkeleton';
 import { useAppStore } from '@/ui/store';
-import type { PluginMessage } from './types/messages';
+import type { PluginMessage, UIMessage } from './types/messages';
+
+// Direct functions to avoid hook import issues
+function sendPluginMessage(message: UIMessage) {
+  parent.postMessage({ pluginMessage: message }, '*');
+}
 
 function App() {
   const catalogData = useAppStore((s) => s.designSystems);
   const isLoading = useAppStore((s) => s.isLoading);
   const view = useAppStore((s) => s.view);
 
-  const handleMessage = useCallback((message: PluginMessage) => {
-    if (message.type === 'CATALOG_DATA') {
-      useAppStore.getState().setCatalogData(message.payload.designSystems);
-    } else if (message.type === 'PLACEMENT_COMPLETE') {
-      useAppStore.getState().completePlacement(message.payload.nodeName, message.payload.warnings);
-    } else if (message.type === 'PLACEMENT_ERROR') {
-      useAppStore.getState().failPlacement(message.payload.error);
-    }
-  }, []);
+  // Listen for plugin messages
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      const message = event.data.pluginMessage as PluginMessage;
+      if (!message) return;
+      
+      if (message.type === 'CATALOG_DATA') {
+        useAppStore.getState().setCatalogData(message.payload.designSystems);
+      } else if (message.type === 'PLACEMENT_COMPLETE') {
+        useAppStore.getState().completePlacement(message.payload.nodeName, message.payload.warnings);
+      } else if (message.type === 'PLACEMENT_ERROR') {
+        useAppStore.getState().failPlacement(message.payload.error);
+      }
+    };
 
-  const { sendMessage } = usePluginMessage(handleMessage);
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, []);
 
   // Send PLUGIN_READY on mount
   useEffect(() => {
-    sendMessage({ type: 'PLUGIN_READY' });
+    sendPluginMessage({ type: 'PLUGIN_READY' });
   }, [sendMessage]);
 
   // Keyboard navigation

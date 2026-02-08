@@ -6,7 +6,6 @@ import { useAppStore } from '@/ui/store';
 
 export function ResultsList() {
   const { query, results, totalResults, paginatedResults, totalPages, currentPage } = useSearch();
-  const { sendMessage } = usePluginMessage(() => {});
 
   // Empty states
   if (results.length === 0 && query.trim()) {

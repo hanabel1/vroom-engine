@@ -8,7 +8,6 @@ import { copyToClipboard } from '@/ui/utils/copyToClipboard';
 import type { Component, ComponentProp, ComponentVariant, PropType } from '@/ui/types/catalog';
 import type { UIMessage } from '@/ui/types/messages';
 
-// Direct sendMessage function to avoid hook import issues
 function sendPluginMessage(message: UIMessage) {
   parent.postMessage({ pluginMessage: message }, '*');
 }
@@ -35,16 +34,10 @@ function findVariantHtml(component: Component, selectedProps: Record<string, str
     let match = true;
     let score = 0;
     for (const [k, val] of Object.entries(v.props)) {
-      if (selectedProps[k] !== val) {
-        match = false;
-        break;
-      }
+      if (selectedProps[k] !== val) { match = false; break; }
       score += 1;
     }
-    if (match && score > bestScore) {
-      bestScore = score;
-      best = v;
-    }
+    if (match && score > bestScore) { bestScore = score; best = v; }
   }
   return best?.html;
 }
@@ -60,14 +53,12 @@ function findVariantHtmlByState(component: Component, state: string): string | u
   return v?.html;
 }
 
-/** Generate JSX snippet using the catalog component name (e.g. Button, TextField, Card). */
 function generateJsx(componentName: string, props: Record<string, string>): string {
   const attrs = Object.entries(props)
     .filter(([, v]) => v !== undefined && v !== '')
     .map(([k, v]) => {
       if (v === 'true') return k;
       if (v === 'false') return '';
-      // Emit string values as literals so enum values like "primary", "solid" are not treated as variables
       const escaped = v.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
       return `${k}="${escaped}"`;
     })
@@ -93,28 +84,15 @@ export function ComponentDetail() {
 
   const currentHtml = useMemo(() => {
     if (!component) return '';
-
     if (activeStateTab === 'Disabled') {
       const previewProps = { ...selectedProps, disabled: 'true' };
-      return (
-        findVariantHtml(component, previewProps) ??
-        findVariantHtmlByState(component, 'disabled') ??
-        component.html
-      );
+      return findVariantHtml(component, previewProps) ?? findVariantHtmlByState(component, 'disabled') ?? component.html;
     }
     if (activeStateTab === 'Hover') {
-      return (
-        findVariantHtmlByState(component, 'hover') ??
-        findVariantHtml(component, selectedProps) ??
-        component.html
-      );
+      return findVariantHtmlByState(component, 'hover') ?? findVariantHtml(component, selectedProps) ?? component.html;
     }
     if (activeStateTab === 'Focus') {
-      return (
-        findVariantHtmlByState(component, 'focus') ??
-        findVariantHtml(component, selectedProps) ??
-        component.html
-      );
+      return findVariantHtmlByState(component, 'focus') ?? findVariantHtml(component, selectedProps) ?? component.html;
     }
     return findVariantHtml(component, selectedProps) ?? component.html;
   }, [component, selectedProps, activeStateTab]);
@@ -157,83 +135,68 @@ export function ComponentDetail() {
     }
   }, [component, selectedProps, activeStateTab]);
 
+  const goBack = () => {
+    useAppStore.getState().resetPlacement();
+    useAppStore.getState().goBack();
+  };
+
   if (!component || !activeRef) {
     return (
-      <div className="component-detail">
-        <div className="component-detail-header">
-          <button
-            type="button"
-            className="component-detail-back"
-            onClick={() => {
-              useAppStore.getState().resetPlacement();
-              useAppStore.getState().goBack();
-            }}
-            aria-label="Back"
-          >
-            ←
+      <div className="detail">
+        <header className="detail-header">
+          <button type="button" className="detail-back" onClick={goBack} aria-label="Back">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 12H5M12 19l-7-7 7-7" /></svg>
           </button>
           <Text variant="body-2">Component not found</Text>
-        </div>
+        </header>
       </div>
     );
   }
 
-  const codeProps =
-    activeStateTab === 'Disabled' ? { ...selectedProps, disabled: 'true' } : selectedProps;
+  const codeProps = activeStateTab === 'Disabled' ? { ...selectedProps, disabled: 'true' } : selectedProps;
   const jsxCode = generateJsx(component.name ?? component.id, codeProps);
 
   return (
-    <div className="component-detail">
-      <header className="component-detail-header">
-        <button
-          type="button"
-          className="component-detail-back"
-          onClick={() => {
-            useAppStore.getState().resetPlacement();
-            useAppStore.getState().goBack();
-          }}
-          aria-label="Back"
-        >
-          ←
+    <div className="detail">
+      {/* Sticky header */}
+      <header className="detail-header">
+        <button type="button" className="detail-back" onClick={goBack} aria-label="Back">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 12H5M12 19l-7-7 7-7" /></svg>
         </button>
-        <Text variant="body-2" weight="bold">
-          {component.name}
-        </Text>
+        <svg className="detail-header-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0066ff" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2" /><path d="M3 9h18M9 21V9" /></svg>
+        <Text variant="body-2" weight="bold">{component.name}</Text>
       </header>
 
-      <div className="component-detail-body">
-        <section className="component-detail-section">
+      {/* Scrollable body */}
+      <div className="detail-body">
+        {/* Preview with grid background */}
+        <section className="detail-preview">
           <HtmlPreview
             html={currentHtml}
             showDimensions
-            previewState={
-              activeStateTab === 'Default'
-                ? undefined
-                : (activeStateTab.toLowerCase() as 'hover' | 'focus' | 'disabled')
-            }
+            previewState={activeStateTab === 'Default' ? undefined : (activeStateTab.toLowerCase() as 'hover' | 'focus' | 'disabled')}
           />
         </section>
 
-        <section className="component-detail-section">
-          <h2 className="component-detail-section-title">State</h2>
-          <div className="component-detail-state-tabs">
-            {STATE_TABS.map((state) => (
-              <button
-                key={state}
-                type="button"
-                className={`component-detail-state-tab ${activeStateTab === state ? 'active' : ''}`}
-                onClick={() => setActiveStateTab(state)}
-              >
-                {state}
-              </button>
-            ))}
-          </div>
-        </section>
+        {/* State tabs - inline, no section title */}
+        <div className="detail-state-tabs">
+          {STATE_TABS.map((state) => (
+            <button
+              key={state}
+              type="button"
+              className={`detail-state-tab${activeStateTab === state ? ' active' : ''}`}
+              onClick={() => setActiveStateTab(state)}
+            >
+              {state}
+            </button>
+          ))}
+        </div>
 
+        {/* Properties */}
         {component.props && component.props.length > 0 && (
-          <section className="component-detail-section">
-            <h2 className="component-detail-section-title">Properties</h2>
-            <div className="component-detail-props">
+          <section className="detail-section">
+            <h2 className="detail-section-title">Properties</h2>
+            <div className="detail-props">
               {component.props.map((prop) => (
                 <PropControl
                   key={prop.name}
@@ -246,81 +209,66 @@ export function ComponentDetail() {
           </section>
         )}
 
-        <section className="component-detail-section">
-          <h2 className="component-detail-section-title">Code</h2>
-          <div className="component-detail-code-block">
-            <button type="button" className="component-detail-code-copy" onClick={handleCopyCode}>
+        {/* Code */}
+        <section className="detail-section">
+          <div className="detail-section-header">
+            <h2 className="detail-section-title">Code</h2>
+            <button type="button" className="detail-copy-link" onClick={handleCopyCode}>
               {copyFeedback === 'code' ? 'Copied!' : 'Copy'}
             </button>
-            <pre className="component-detail-code-pre" aria-label={`JSX for ${component.name}`}>
-              {jsxCode}
-            </pre>
           </div>
+          <pre className="detail-code-block">
+            {jsxCode}
+          </pre>
         </section>
 
-        <section className="component-detail-section">
-          <div className="component-detail-actions">
-            <Button variant="solid" color="primary" size="small" onClick={handlePlace}>
-              Place on Canvas
-            </Button>
-            <Button variant="outline" color="primary" size="small" onClick={handleCopySource}>
-              {copyFeedback === 'source' ? 'Copied!' : 'Copy Source'}
-            </Button>
-          </div>
-          {placementStatus === 'placing' && (
-            <p className="component-detail-placement-feedback">Placing…</p>
-          )}
-          {placementStatus === 'success' && (
-            <p className="component-detail-placement-feedback success">Placed on canvas.</p>
-          )}
-          {placementStatus === 'error' && placementError && (
-            <p className="component-detail-placement-feedback error">{placementError}</p>
-          )}
-        </section>
+        {/* Placement feedback */}
+        {placementStatus === 'placing' && <p className="detail-feedback">Placing…</p>}
+        {placementStatus === 'success' && <p className="detail-feedback success">Placed on canvas.</p>}
+        {placementStatus === 'error' && placementError && <p className="detail-feedback error">{placementError}</p>}
       </div>
+
+      {/* Sticky bottom action bar */}
+      <footer className="detail-actions">
+        <Button fullWidth variant="solid" color="primary" size="medium" onClick={handlePlace}>
+          + Place on Canvas
+        </Button>
+        <Button fullWidth variant="outline" color="primary" size="medium" onClick={handleCopySource}>
+          {copyFeedback === 'source' ? 'Copied!' : '<> Copy Source'}
+        </Button>
+      </footer>
     </div>
   );
 }
 
-function PropControl({
-  prop,
-  value,
-  onChange,
-}: {
-  prop: ComponentProp;
-  value: string;
-  onChange: (v: string) => void;
-}) {
+/* ---- Prop controls ---- */
+
+function PropControl({ prop, value, onChange }: { prop: ComponentProp; value: string; onChange: (v: string) => void }) {
   const type = prop.type as PropType;
 
   if (type === 'boolean') {
-    const checked = value === 'true';
     return (
-      <div className="component-detail-prop-row">
-        <span className="component-detail-prop-label">{prop.name}</span>
-        <input
-          type="checkbox"
-          checked={checked}
-          onChange={(e) => onChange(e.target.checked ? 'true' : 'false')}
-          className="component-detail-prop-toggle"
-        />
+      <div className="detail-prop-row">
+        <span className="detail-prop-label">{prop.name}</span>
+        <label className="detail-toggle">
+          <input
+            type="checkbox"
+            checked={value === 'true'}
+            onChange={(e) => onChange(e.target.checked ? 'true' : 'false')}
+          />
+          <span className="detail-toggle-track" />
+        </label>
       </div>
     );
   }
 
   if (type === 'enum' && prop.values?.length) {
     return (
-      <div className="component-detail-prop-row">
-        <span className="component-detail-prop-label">{prop.name}</span>
-        <select
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          className="component-detail-prop-select"
-        >
+      <div className="detail-prop-row">
+        <span className="detail-prop-label">{prop.name}</span>
+        <select value={value} onChange={(e) => onChange(e.target.value)} className="detail-prop-select">
           {prop.values.map((v) => (
-            <option key={v.value} value={v.value}>
-              {v.label ?? v.value}
-            </option>
+            <option key={v.value} value={v.value}>{v.label ?? v.value}</option>
           ))}
         </select>
       </div>
@@ -329,32 +277,32 @@ function PropControl({
 
   if (type === 'number' && prop.values?.length) {
     return (
-      <div className="component-detail-prop-row">
-        <span className="component-detail-prop-label">{prop.name}</span>
-        <View direction="row" gap={2}>
+      <div className="detail-prop-row">
+        <span className="detail-prop-label">{prop.name}</span>
+        <div className="detail-size-group">
           {prop.values.map((v) => (
             <button
               key={v.value}
               type="button"
-              className={`component-detail-state-tab ${value === v.value ? 'active' : ''}`}
+              className={`detail-size-btn${value === v.value ? ' active' : ''}`}
               onClick={() => onChange(v.value)}
             >
               {v.label ?? v.value}
             </button>
           ))}
-        </View>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="component-detail-prop-row">
-      <span className="component-detail-prop-label">{prop.name}</span>
+    <div className="detail-prop-row">
+      <span className="detail-prop-label">{prop.name}</span>
       <input
         type={type === 'number' ? 'number' : 'text'}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="component-detail-prop-input"
+        className="detail-prop-input"
       />
     </div>
   );

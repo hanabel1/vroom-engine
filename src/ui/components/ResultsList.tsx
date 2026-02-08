@@ -4,6 +4,7 @@ import { EmptyState } from './EmptyState';
 import { useSearch } from '../hooks/useSearch';
 import { useAppStore } from '@/ui/store';
 
+
 export function ResultsList() {
   const { query, results, totalResults, paginatedResults, totalPages, currentPage } = useSearch();
 
@@ -16,12 +17,8 @@ export function ResultsList() {
     return <EmptyState variant="browse" />;
   }
 
-  const handleComponentClick = (componentId: string, designSystemId: string) => {
-    useAppStore.getState().openDetail(componentId, designSystemId);
-  };
-
   return (
-    <View gap={4}>
+    <View gap={4} overflow="auto">
       {/* Section header with result count */}
       <View direction="row" align="center" gap={2}>
         <Text variant="body-2" color="neutral">
@@ -29,20 +26,19 @@ export function ResultsList() {
         </Text>
       </View>
 
-      {/* Results grid - 2 columns; fixed-height wrapper so all cards same size */}
-      <Grid columns={2} gap={3}>
-        {paginatedResults.map((result) => (
-          <Grid.Item key={`${result.item.designSystemId}-${result.item.id}`}>
-            <div className="result-card-wrapper">
+      {/* Results grid - 2 columns */}
+      <div style={{ overflowY: 'scroll', height: '100%' }}>
+        <Grid columns={2} gap={3}>
+          {paginatedResults.map((result) => (
+            <Grid.Item key={`${result.item.designSystemId}-${result.item.id}`}>
               <ResultCard
                 component={result.item}
                 matches={result.matches}
-                onClick={() => handleComponentClick(result.item.id, result.item.designSystemId)}
               />
-            </div>
-          </Grid.Item>
-        ))}
-      </Grid>
+            </Grid.Item>
+          ))}
+        </Grid>
+      </div>
 
       {/* Pagination controls */}
       {totalPages > 1 && (

@@ -139,7 +139,7 @@ figma.ui.onmessage = async (msg) => {
 // Show UI
 figma.showUI(__html__, {
   width: 400,
-  height: 600,
+  height: 800,
   title: 'Design System Catalog',
   themeColors: true,
 });

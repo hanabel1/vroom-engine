@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { Card, View, Text, Badge, Actionable } from 'reshaped';
+import { Card, Text, Badge, Button } from 'reshaped';
 import type { SearchableComponent } from '../hooks/useSearch';
 import type Fuse from 'fuse.js';
 import { HighlightedText } from './HighlightedText';
@@ -39,53 +39,54 @@ export function ResultCard({ component, matches, onClick }: ResultCardProps) {
     return () => ro.disconnect();
   }, [component.html]);
 
-  const cardContent = (
-    <View gap={3} className="result-card-content">
-      {/* Badge positioned absolutely at top-right */}
-      <span className="result-card-badge-positioned" title={component.designSystemName}>
-        <Badge color="neutral" size="small">
-          {component.designSystemName}
-        </Badge>
-      </span>
+  return (
+    <Card padding={0} className="result-card-wrapper">
+      <div className="result-card-inner">
+        {/* Badge positioned absolutely at top-right */}
+        <span className="result-card-badge-positioned" title={component.designSystemName}>
+          <Badge color="neutral" size="small">
+            {component.designSystemName}
+          </Badge>
+        </span>
 
-      <div className="result-card-preview-box">
-        {component.html ? (
-          <div
-            ref={previewRef}
-            className="result-card-preview-html"
-            dangerouslySetInnerHTML={{ __html: component.html }}
-          />
-        ) : (
-          <span className="result-card-preview-fallback">
-            {component.name.charAt(0)}
-          </span>
-        )}
-      </div>
+        {/* Preview takes most space */}
+        <div className="result-card-preview-box">
+          {component.html ? (
+            <div
+              ref={previewRef}
+              className="result-card-preview-html"
+              dangerouslySetInnerHTML={{ __html: component.html }}
+            />
+          ) : (
+            <span className="result-card-preview-fallback">{component.name.charAt(0)}</span>
+          )}
+        </div>
 
-      {/* Component info — simplified without inline badge */}
-      <View gap={2} className="result-card-info">
-        <View direction="row" align="center" gap={2} className="result-card-title-row">
+        {/* Title and category at bottom */}
+        <div className="result-card-info">
           <span className="result-card-name" title={component.name}>
             <Text variant="body-2" weight="regular">
               <HighlightedText text={component.name} matches={matches} fieldName="name" />
             </Text>
           </span>
-        </View>
-        <Text variant="caption-1" color="neutral">
-          {component.category}
-        </Text>
-      </View>
-    </View>
+          <Text variant="caption-1" color="neutral">
+            {component.category}
+          </Text>
+        </div>
+
+        {/* Button slides from bottom on hover */}
+        <div className="result-card-button-container">
+          <Button 
+            fullWidth 
+            variant="solid" 
+            color="primary" 
+            size="small" 
+            onClick={onClick}
+          >
+            View Details
+          </Button>
+        </div>
+      </div>
+    </Card>
   );
-
-  // If onClick is provided, make the card actionable (clickable)
-  if (onClick) {
-    return (
-      <Card padding={3}>
-        <Actionable onClick={onClick}>{cardContent}</Actionable>
-      </Card>
-    );
-  }
-
-  return <Card padding={3}>{cardContent}</Card>;
 }

@@ -266,39 +266,34 @@ body {
 /* ----- Result card: fixed size, HTML preview, truncation ----- */
 
 /* Fixed-height wrapper so every card is the same size rectangle */
+/* Result card wrapper with hover effect */
 .result-card-wrapper {
-  height: 200px;
-  min-height: 200px;
-  max-height: 200px;
+  height: 280px;
   overflow: hidden;
-  align-self: start;
-  display: flex;
-  flex-direction: column;
-  width: 100%;
+  position: relative;
+  transition: all 0.2s ease;
 }
 
-.result-card-wrapper > * {
-  flex: 0 0 100%;
+.result-card-wrapper:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Inner container for card content */
+.result-card-inner {
+  position: relative;
+  display: flex;
+  flex-direction: column;
   height: 100%;
-  min-height: 0;
-  max-height: 100%;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
+  padding: 16px;
+  gap: 12px;
 }
 
-.result-card-wrapper .result-card-preview-box {
-  flex-shrink: 0;
-}
-
-/* Preview box: same 72px height for every card */
+/* Preview box takes most space (flex-grow) */
 .result-card-preview-box {
   position: relative;
   width: 100%;
-  height: 72px;
-  min-height: 72px;
-  max-height: 72px;
-  flex-shrink: 0;
+  flex: 1;
+  min-height: 120px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -332,18 +327,40 @@ body {
   pointer-events: none;
 }
 
-/* Title row: truncate long name and badge so they don't push layout */
-.result-card-title-row {
-  min-width: 0;
+/* Title and info aligned at end */
+.result-card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-end;
+  text-align: right;
+  min-height: 44px;
 }
 
 .result-card-name {
-  flex: 1 1 0;
-  min-width: 0;
+  display: block;
+  width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  display: block;
+}
+
+/* Button container - slides from bottom on hover */
+.result-card-button-container {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 16px;
+  background: linear-gradient(to top, rgba(255, 255, 255, 1) 70%, rgba(255, 255, 255, 0));
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
+  pointer-events: none;
+}
+
+.result-card-wrapper:hover .result-card-button-container {
+  transform: translateY(0);
+  pointer-events: all;
 }
 
 .result-card-badge {

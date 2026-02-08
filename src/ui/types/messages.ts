@@ -1,6 +1,7 @@
 // Message protocol types for UI ↔ Plugin communication
 
 import type { DesignSystem } from './catalog';
+import type { ParsedElement } from '../utils/parseHtml';
 
 // UI → Plugin messages
 export interface PluginReadyMessage {
@@ -13,7 +14,7 @@ export interface PlaceComponentMessage {
     designSystemId: string;
     componentId: string;
     variantName?: string;
-    html: string;
+    parsedElement: ParsedElement;
   };
   requestId: string;
 }

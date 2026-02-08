@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { HighlightedText } from '../../src/ui/components/HighlightedText';
+import { ResultCard } from '../../src/ui/components/ResultCard';
 import type Fuse from 'fuse.js';
 
 describe('HighlightedText', () => {
@@ -68,5 +69,35 @@ describe('HighlightedText', () => {
     expect(marks).toHaveLength(2);
     expect(marks[0]?.textContent).toBe('But');
     expect(marks[1]?.textContent).toBe('Compo');
+  });
+});
+
+describe('HighlightedText integration with ResultCard', () => {
+  it('ResultCard should render highlighted text when matches provided', () => {
+    const mockComponent = {
+      id: 'btn-1',
+      name: 'Button Component',
+      category: 'button',
+      designSystemId: 'mui',
+      designSystemName: 'MUI',
+      html: '<button>Test</button>',
+    };
+
+    const matches: readonly Fuse.FuseResultMatch[] = [
+      {
+        indices: [[0, 5]],
+        value: 'Button Component',
+        key: 'name',
+        refIndex: 0,
+      },
+    ];
+
+    const { container } = render(
+      <ResultCard component={mockComponent} matches={matches} />
+    );
+
+    const mark = container.querySelector('mark');
+    expect(mark).toBeTruthy();
+    expect(mark?.textContent).toBe('Button');
   });
 });

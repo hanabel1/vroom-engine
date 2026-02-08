@@ -1,16 +1,19 @@
 import { useEffect, useRef } from 'react';
 import { Card, View, Text, Badge, Button, Actionable } from 'reshaped';
 import type { SearchableComponent } from '../hooks/useSearch';
+import type Fuse from 'fuse.js';
+import { HighlightedText } from './HighlightedText';
 
 interface ResultCardProps {
   component: SearchableComponent;
+  matches?: readonly Fuse.FuseResultMatch[];
   onClick?: () => void;
   onPlace?: () => void;
 }
 
 const PREVIEW_PADDING = 16;
 
-export function ResultCard({ component, onClick, onPlace }: ResultCardProps) {
+export function ResultCard({ component, matches, onClick, onPlace }: ResultCardProps) {
   const previewRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -65,7 +68,7 @@ export function ResultCard({ component, onClick, onPlace }: ResultCardProps) {
         <View direction="row" align="center" justify="space-between" gap={2} className="result-card-title-row">
           <span className="result-card-name" title={component.name}>
             <Text variant="body-2" weight="bold">
-              {component.name}
+              <HighlightedText text={component.name} matches={matches} fieldName="name" />
             </Text>
           </span>
           <span className="result-card-badge" title={component.designSystemName}>

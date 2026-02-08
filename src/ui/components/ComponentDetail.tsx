@@ -34,16 +34,10 @@ function findVariantHtml(component: Component, selectedProps: Record<string, str
     let match = true;
     let score = 0;
     for (const [k, val] of Object.entries(v.props)) {
-      if (selectedProps[k] !== val) {
-        match = false;
-        break;
-      }
+      if (selectedProps[k] !== val) { match = false; break; }
       score += 1;
     }
-    if (match && score > bestScore) {
-      bestScore = score;
-      best = v;
-    }
+    if (match && score > bestScore) { bestScore = score; best = v; }
   }
   return best?.html;
 }
@@ -53,7 +47,8 @@ function findVariantHtmlByState(component: Component, state: string): string | u
   const stateLower = state.toLowerCase();
   const v = component.variants.find(
     (x) =>
-      x.name.toLowerCase() === stateLower || (x.props && (x.props.state === state || x.props.state === stateLower)),
+      x.name.toLowerCase() === stateLower ||
+      (x.props && (x.props.state === state || x.props.state === stateLower))
   );
   return v?.html;
 }
@@ -91,9 +86,7 @@ export function ComponentDetail() {
     if (!component) return '';
     if (activeStateTab === 'Disabled') {
       const previewProps = { ...selectedProps, disabled: 'true' };
-      return (
-        findVariantHtml(component, previewProps) ?? findVariantHtmlByState(component, 'disabled') ?? component.html
-      );
+      return findVariantHtml(component, previewProps) ?? findVariantHtmlByState(component, 'disabled') ?? component.html;
     }
     if (activeStateTab === 'Hover') {
       return findVariantHtmlByState(component, 'hover') ?? findVariantHtml(component, selectedProps) ?? component.html;
@@ -152,9 +145,7 @@ export function ComponentDetail() {
       <div className="detail">
         <header className="detail-header">
           <button type="button" className="detail-back" onClick={goBack} aria-label="Back">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M19 12H5M12 19l-7-7 7-7" />
-            </svg>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 12H5M12 19l-7-7 7-7" /></svg>
           </button>
           <Text variant="body-2">Component not found</Text>
         </header>
@@ -170,11 +161,10 @@ export function ComponentDetail() {
       {/* Sticky header */}
       <header className="detail-header">
         <button type="button" className="detail-back" onClick={goBack} aria-label="Back">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M19 12H5M12 19l-7-7 7-7" />
-          </svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 12H5M12 19l-7-7 7-7" /></svg>
         </button>
-        <Text variant="body-1">{component.name}</Text>
+        <svg className="detail-header-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0066ff" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2" /><path d="M3 9h18M9 21V9" /></svg>
+        <Text variant="body-2" weight="bold">{component.name}</Text>
       </header>
 
       {/* Scrollable body */}
@@ -184,28 +174,22 @@ export function ComponentDetail() {
           <HtmlPreview
             html={currentHtml}
             showDimensions
-            previewState={
-              activeStateTab === 'Default'
-                ? undefined
-                : (activeStateTab.toLowerCase() as 'hover' | 'focus' | 'disabled')
-            }
+            previewState={activeStateTab === 'Default' ? undefined : (activeStateTab.toLowerCase() as 'hover' | 'focus' | 'disabled')}
           />
         </section>
 
         {/* State tabs - inline, no section title */}
-        <div className="detail-state-tabs-container">
-          <div className="detail-state-tabs">
-            {STATE_TABS.map((state) => (
-              <button
-                key={state}
-                type="button"
-                className={`detail-state-tab${activeStateTab === state ? ' active' : ''}`}
-                onClick={() => setActiveStateTab(state)}
-              >
-                {state}
-              </button>
-            ))}
-          </div>
+        <div className="detail-state-tabs">
+          {STATE_TABS.map((state) => (
+            <button
+              key={state}
+              type="button"
+              className={`detail-state-tab${activeStateTab === state ? ' active' : ''}`}
+              onClick={() => setActiveStateTab(state)}
+            >
+              {state}
+            </button>
+          ))}
         </div>
 
         {/* Properties */}
@@ -226,14 +210,16 @@ export function ComponentDetail() {
         )}
 
         {/* Code */}
-        <section className="detail-section" style={{ marginTop: 'auto', padding: '0 16px 16px 16px' }}>
+        <section className="detail-section">
           <div className="detail-section-header">
             <h2 className="detail-section-title">Code</h2>
             <button type="button" className="detail-copy-link" onClick={handleCopyCode}>
               {copyFeedback === 'code' ? 'Copied!' : 'Copy'}
             </button>
           </div>
-          <pre className="detail-code-block">{jsxCode}</pre>
+          <pre className="detail-code-block">
+            {jsxCode}
+          </pre>
         </section>
 
         {/* Placement feedback */}
@@ -282,9 +268,7 @@ function PropControl({ prop, value, onChange }: { prop: ComponentProp; value: st
         <span className="detail-prop-label">{prop.name}</span>
         <select value={value} onChange={(e) => onChange(e.target.value)} className="detail-prop-select">
           {prop.values.map((v) => (
-            <option key={v.value} value={v.value}>
-              {v.label ?? v.value}
-            </option>
+            <option key={v.value} value={v.value}>{v.label ?? v.value}</option>
           ))}
         </select>
       </div>

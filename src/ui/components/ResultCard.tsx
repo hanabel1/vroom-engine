@@ -74,9 +74,9 @@ export function ResultCard({ component, onClick, onPlace }: ResultCardProps) {
             </Badge>
           </span>
         </View>
-        <Text variant="caption-1" color="neutral">
+        {/* <Text variant="caption-1" color="neutral">
           {component.category}
-        </Text>
+        </Text> */}
       </View>
 
       {/* Place button */}
@@ -87,7 +87,7 @@ export function ResultCard({ component, onClick, onPlace }: ResultCardProps) {
         size="small"
         onClick={handlePlaceClick}
       >
-        Place
+        Place on Canvas
       </Button>
     </View>
   );

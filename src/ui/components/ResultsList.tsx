@@ -18,16 +18,14 @@ export function ResultsList() {
   }
 
   return (
-    <View gap={4} overflow="auto">
-      {/* Section header with result count */}
-      <View direction="row" align="center" gap={2}>
-        <Text variant="body-2" color="neutral">
-          {totalResults} {totalResults === 1 ? 'result' : 'results'}
-        </Text>
-      </View>
+    <div className="results-list">
+      {/* Result count */}
+      <Text variant="body-2" color="neutral">
+        {totalResults} {totalResults === 1 ? 'result' : 'results'}
+      </Text>
 
       {/* Results grid - 2 columns */}
-      <div style={{ overflowY: 'scroll', height: '100%' }}>
+      <div className="results-grid-scroll">
         <Grid columns={2} gap={3}>
           {paginatedResults.map((result) => (
             <Grid.Item key={`${result.item.designSystemId}-${result.item.id}`}>
@@ -52,6 +50,6 @@ export function ResultsList() {
           />
         </View>
       )}
-    </View>
+    </div>
   );
 }

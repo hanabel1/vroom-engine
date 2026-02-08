@@ -18,6 +18,7 @@ body {
   flex-direction: column;
   height: 100vh;
   overflow: hidden;
+  box-sizing: border-box;
 }
 
 .search-header {
@@ -109,10 +110,18 @@ body {
 .results-list {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 12px;
   flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.results-grid-scroll {
+  flex: 1;
+  min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
+  padding-bottom: 16px;
 }
 
 .results-group {
@@ -267,23 +276,27 @@ body {
 
 /* Fixed-height wrapper so every card is the same size rectangle */
 /* Result card wrapper with hover effect */
+/* Fixed-height card wrapper for uniform grid */
 .result-card-wrapper {
+  height: 240px;
   overflow: hidden;
   position: relative;
-  transition: all 0.2s ease;
+  transition: box-shadow 0.2s ease;
 }
 
 .result-card-wrapper:hover {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-/* Inner container for card content */
+/* Inner layout */
 .result-card-inner {
   position: relative;
   display: flex;
   flex-direction: column;
   height: 100%;
-  gap: 12px;
+  padding: 12px;
+  gap: 8px;
+  cursor: pointer;
 }
 
 /* Preview box takes most space (flex-grow) */

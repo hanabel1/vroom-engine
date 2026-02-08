@@ -1,8 +1,8 @@
-import { useEffect, useRef } from 'react';
 import { Card, View, Text, Badge, Actionable } from 'reshaped';
 import type { SearchableComponent } from '../hooks/useSearch';
 import type Fuse from 'fuse.js';
 import { HighlightedText } from './HighlightedText';
+import { HtmlPreview } from './HtmlPreview';
 
 interface ResultCardProps {
   component: SearchableComponent;
@@ -10,35 +10,7 @@ interface ResultCardProps {
   onClick?: () => void;
 }
 
-const PREVIEW_PADDING = 16;
-
 export function ResultCard({ component, matches, onClick }: ResultCardProps) {
-  const previewRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!component.html || !previewRef.current) return;
-    const el = previewRef.current.firstElementChild as HTMLElement | null;
-    if (!el) return;
-
-    const fitScale = () => {
-      const container = previewRef.current;
-      if (!container || !el) return;
-      const boxW = container.offsetWidth - PREVIEW_PADDING;
-      const boxH = container.offsetHeight - PREVIEW_PADDING;
-      const contentW = el.offsetWidth;
-      const contentH = el.offsetHeight;
-      if (contentW <= 0 || contentH <= 0) return;
-      const scale = Math.min(boxW / contentW, boxH / contentH, 1);
-      el.style.transform = `translate(-50%, -50%) scale(${scale})`;
-      el.style.transformOrigin = 'center center';
-    };
-
-    fitScale();
-    const ro = new ResizeObserver(fitScale);
-    ro.observe(previewRef.current);
-    return () => ro.disconnect();
-  }, [component.html]);
-
   const cardContent = (
     <View gap={3} className="result-card-content">
       {/* Badge positioned absolutely at top-right */}
@@ -50,10 +22,10 @@ export function ResultCard({ component, matches, onClick }: ResultCardProps) {
 
       <div className="result-card-preview-box">
         {component.html ? (
-          <div
-            ref={previewRef}
-            className="result-card-preview-html"
-            dangerouslySetInnerHTML={{ __html: component.html }}
+          <HtmlPreview 
+            html={component.html}
+            className="result-card-preview"
+            showDimensions={false}
           />
         ) : (
           <span className="result-card-preview-fallback">

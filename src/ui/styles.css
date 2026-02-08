@@ -246,3 +246,109 @@ body {
   background-color: #0047b3;
 }
 
+/* ----- Result card: fixed size, HTML preview, truncation ----- */
+
+/* Fixed-height wrapper so every card is the same size rectangle */
+.result-card-wrapper {
+  height: 200px;
+  min-height: 200px;
+  max-height: 200px;
+  overflow: hidden;
+  align-self: start;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.result-card-wrapper > * {
+  flex: 0 0 100%;
+  height: 100%;
+  min-height: 0;
+  max-height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.result-card-wrapper .result-card-preview-box {
+  flex-shrink: 0;
+}
+
+/* Preview box: same 72px height for every card */
+.result-card-preview-box {
+  position: relative;
+  width: 100%;
+  height: 72px;
+  min-height: 72px;
+  max-height: 72px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.result-card-preview-fallback {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #666;
+}
+
+/* Preview: HTML centered; scale is set in JS to fit box */
+.result-card-preview-html {
+  position: absolute;
+  inset: 0;
+  padding: 8px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.result-card-preview-html > * {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) scale(0.4);
+  transform-origin: center center;
+  pointer-events: none;
+}
+
+/* Title row: truncate long name and badge so they don't push layout */
+.result-card-title-row {
+  min-width: 0;
+}
+
+.result-card-name {
+  flex: 1 1 0;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: block;
+}
+
+.result-card-badge {
+  flex-shrink: 0;
+  min-width: 0;
+  max-width: 50%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: inline-block;
+}
+
+.result-card-content {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.result-card-info {
+  min-width: 0;
+  flex-shrink: 0;
+}
+

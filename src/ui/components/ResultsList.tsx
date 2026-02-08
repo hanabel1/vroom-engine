@@ -24,9 +24,6 @@ export function ResultsList() {
     <View gap={4}>
       {/* Section header with result count */}
       <View direction="row" align="center" gap={2}>
-        <Text variant="title-4" weight="bold">
-          COMPONENTS
-        </Text>
         <Text variant="body-2" color="neutral">
           {totalResults} {totalResults === 1 ? 'result' : 'results'}
         </Text>

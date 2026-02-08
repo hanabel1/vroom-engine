@@ -4,17 +4,12 @@ import { EmptyState } from './EmptyState';
 import { useSearch } from '../hooks/useSearch';
 import { useAppStore } from '@/ui/store';
 import { usePluginMessage } from '../hooks/usePluginMessage';
-
-interface ParsedElement {
-  tagName: string;
-  attributes: Record<string, string>;
-  children: (ParsedElement | string)[];
-  textContent?: string;
-}
+import { parseHTMLInUI } from '@/ui/utils/parseHtml';
+import type { PlaceComponentMessage } from '@/ui/types/messages';
 
 export function ResultsList() {
   const { query, results, totalResults, paginatedResults, totalPages, currentPage } = useSearch();
-  const { sendMessage } = usePluginMessage();
+  const { sendMessage } = usePluginMessage(() => {});
 
   // Empty states
   if (results.length === 0 && query.trim()) {
@@ -30,78 +25,17 @@ export function ResultsList() {
   };
 
   const handleComponentPlace = (componentId: string, designSystemId: string, html: string) => {
-    const requestId = `${Date.now()}-${Math.random()}`;
-
-    // Parse HTML in UI thread (where DOMParser is available)
     const parsedElement = parseHTMLInUI(html);
+    if (!parsedElement) return;
 
     useAppStore.getState().startPlacement();
-
-    sendMessage({
+    const msg: PlaceComponentMessage = {
       type: 'PLACE_COMPONENT',
-      payload: {
-        designSystemId,
-        componentId,
-        parsedElement,
-      },
-      requestId,
-    });
+      payload: { designSystemId, componentId, parsedElement },
+      requestId: `${Date.now()}-${Math.random()}`,
+    };
+    sendMessage(msg);
   };
-
-  // Parse HTML using browser's DOMParser (available in UI thread)
-  function parseHTMLInUI(html: string) {
-    if (!html) return null;
-
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(html, 'text/html');
-    const body = doc.body;
-
-    if (!body.firstChild) return null;
-
-    return parseElement(body.firstChild as Element);
-  }
-
-  function parseElement(element: Node): ParsedElement | string | null {
-    // Text node
-    if (element.nodeType === Node.TEXT_NODE) {
-      const text = element.textContent?.trim() || '';
-      return text ? text : null;
-    }
-
-    // Element node
-    if (element.nodeType === Node.ELEMENT_NODE) {
-      const el = element as Element;
-      const tagName = el.tagName.toLowerCase();
-
-      // Skip script and style tags
-      if (tagName === 'script' || tagName === 'style') {
-        return null;
-      }
-
-      const attributes: Record<string, string> = {};
-      for (let i = 0; i < el.attributes.length; i++) {
-        const attr = el.attributes[i];
-        attributes[attr.name] = attr.value;
-      }
-
-      const children: (ParsedElement | string)[] = [];
-      for (let i = 0; i < el.childNodes.length; i++) {
-        const child = parseElement(el.childNodes[i]);
-        if (child) {
-          children.push(child);
-        }
-      }
-
-      return {
-        tagName,
-        attributes,
-        children,
-        textContent: el.textContent || undefined,
-      };
-    }
-
-    return null;
-  }
 
   return (
     <View gap={4}>

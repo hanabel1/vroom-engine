@@ -3,27 +3,23 @@ import { usePluginMessage } from './hooks/usePluginMessage';
 import { SearchBar } from './components/SearchBar';
 import { FilterChips } from './components/FilterChips';
 import { ResultsList } from './components/ResultsList';
+import { ComponentDetail } from './components/ComponentDetail';
 import { LoadingSkeleton } from './components/LoadingSkeleton';
 import { useAppStore } from '@/ui/store';
 import type { PluginMessage } from './types/messages';
 
 function App() {
-  // Read catalog state from store
   const catalogData = useAppStore((s) => s.designSystems);
   const isLoading = useAppStore((s) => s.isLoading);
+  const view = useAppStore((s) => s.view);
 
   const handleMessage = useCallback((message: PluginMessage) => {
     if (message.type === 'CATALOG_DATA') {
       useAppStore.getState().setCatalogData(message.payload.designSystems);
     } else if (message.type === 'PLACEMENT_COMPLETE') {
-      // Show success notification
-      console.log('Component placed:', message.payload.nodeName);
-      if (message.payload.warnings.length > 0) {
-        console.warn('Placement warnings:', message.payload.warnings);
-      }
+      useAppStore.getState().completePlacement(message.payload.nodeName, message.payload.warnings);
     } else if (message.type === 'PLACEMENT_ERROR') {
-      // Show error notification
-      console.error('Placement error:', message.payload.error);
+      useAppStore.getState().failPlacement(message.payload.error);
     }
   }, []);
 
@@ -80,15 +76,21 @@ function App() {
     );
   }
 
+  if (view === 'detail') {
+    return (
+      <div className="container">
+        <ComponentDetail />
+      </div>
+    );
+  }
+
   return (
     <div className="container">
       <div className="header">
         <h1>Design System Catalog</h1>
       </div>
       <SearchBar />
-
       <FilterChips />
-
       <ResultsList />
     </div>
   );

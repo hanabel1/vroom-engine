@@ -5,7 +5,7 @@ import { useAppStore } from '@/ui/store';
 import { usePluginMessage } from '@/ui/hooks/usePluginMessage';
 import { HtmlPreview } from './HtmlPreview';
 import { parseHTMLInUI } from '@/ui/utils/parseHtml';
-import { copyToClipboard } from '../utils/copyToClipboard';
+import { copyToClipboard } from '@/ui/utils/copyToClipboard';
 import type { Component, ComponentProp, ComponentVariant, PropType } from '@/ui/types/catalog';
 
 const STATE_TABS = ['Default', 'Hover', 'Focus', 'Disabled'] as const;

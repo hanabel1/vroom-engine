@@ -62,8 +62,9 @@ function generateJsx(componentName: string, props: Record<string, string>): stri
     .map(([k, v]) => {
       if (v === 'true') return k;
       if (v === 'false') return '';
-      if (/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(v)) return `${k}={${v}}`;
-      return `${k}="${v}"`;
+      // Emit string values as literals so enum values like "primary", "solid" are not treated as variables
+      const escaped = v.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+      return `${k}="${escaped}"`;
     })
     .filter(Boolean);
   const name = componentName || 'Component';

@@ -17,16 +17,27 @@ import { mapElementToFigmaNode, type ConversionWarning } from '@/plugin/converte
 function loadCatalogData(): DesignSystem[] {
   const catalogs: DesignSystem[] = [];
 
+  // Helper to transform catalog JSON to DesignSystem
+  const transformCatalog = (catalog: any): DesignSystem => ({
+    id: catalog.systemId || catalog.id,
+    name: catalog.project || catalog.name,
+    version: catalog.reactVersion || catalog.version || '1.0.0',
+    description: catalog.description,
+    sourceUrl: catalog.sourceUrl,
+    logoUrl: catalog.logoUrl,
+    components: catalog.components || [],
+  });
+
   try {
     catalogs.push(
-      muiCatalog as DesignSystem,
-      spectrumCatalog as DesignSystem,
-      tailwindCatalog as DesignSystem,
-      mockDs1Catalog as DesignSystem,
-      mockDs2Catalog as DesignSystem,
-      mockDs3Catalog as DesignSystem,
-      mockDs4Catalog as DesignSystem,
-      mockDs5Catalog as DesignSystem,
+      transformCatalog(muiCatalog),
+      transformCatalog(spectrumCatalog),
+      transformCatalog(tailwindCatalog),
+      transformCatalog(mockDs1Catalog),
+      transformCatalog(mockDs2Catalog),
+      transformCatalog(mockDs3Catalog),
+      transformCatalog(mockDs4Catalog),
+      transformCatalog(mockDs5Catalog),
     );
   } catch (error) {
     console.error('Failed to load catalog data:', error);
@@ -86,6 +97,15 @@ figma.ui.onmessage = async (msg) => {
           : figma.currentPage;
 
       parent.appendChild(node);
+
+      // Position at viewport center
+      const bounds = figma.viewport.bounds;
+      const centerX = bounds.x + bounds.width / 2;
+      const centerY = bounds.y + bounds.height / 2;
+      
+      // Center the node at the viewport center
+      node.x = centerX - node.width / 2;
+      node.y = centerY - node.height / 2;
 
       // Select and scroll into view
       figma.currentPage.selection = [node];

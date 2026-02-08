@@ -58,7 +58,6 @@ export function ResultsList() {
                 component={result.item}
                 matches={result.matches}
                 onClick={() => handleComponentClick(result.item.id, result.item.designSystemId)}
-                onPlace={() => handleComponentPlace(result.item.id, result.item.designSystemId, result.item.html)}
               />
             </div>
           </Grid.Item>

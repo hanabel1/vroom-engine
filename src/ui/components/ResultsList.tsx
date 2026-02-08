@@ -3,9 +3,6 @@ import { ResultCard } from './ResultCard';
 import { EmptyState } from './EmptyState';
 import { useSearch } from '../hooks/useSearch';
 import { useAppStore } from '@/ui/store';
-import { usePluginMessage } from '../hooks/usePluginMessage';
-import { parseHTMLInUI } from '@/ui/utils/parseHtml';
-import type { PlaceComponentMessage } from '@/ui/types/messages';
 
 export function ResultsList() {
   const { query, results, totalResults, paginatedResults, totalPages, currentPage } = useSearch();
@@ -22,19 +19,6 @@ export function ResultsList() {
 
   const handleComponentClick = (componentId: string, designSystemId: string) => {
     useAppStore.getState().openDetail(componentId, designSystemId);
-  };
-
-  const handleComponentPlace = (componentId: string, designSystemId: string, html: string) => {
-    const parsedElement = parseHTMLInUI(html);
-    if (!parsedElement) return;
-
-    useAppStore.getState().startPlacement();
-    const msg: PlaceComponentMessage = {
-      type: 'PLACE_COMPONENT',
-      payload: { designSystemId, componentId, parsedElement },
-      requestId: `${Date.now()}-${Math.random()}`,
-    };
-    sendMessage(msg);
   };
 
   return (

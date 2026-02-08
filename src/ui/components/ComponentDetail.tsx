@@ -174,21 +174,7 @@ export function ComponentDetail() {
             <path d="M19 12H5M12 19l-7-7 7-7" />
           </svg>
         </button>
-        <svg
-          className="detail-header-icon"
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="#0066ff"
-          strokeWidth="2"
-        >
-          <rect x="3" y="3" width="18" height="18" rx="2" />
-          <path d="M3 9h18M9 21V9" />
-        </svg>
-        <Text variant="body-2" weight="bold">
-          {component.name}
-        </Text>
+        <Text variant="body-1">{component.name}</Text>
       </header>
 
       {/* Scrollable body */}

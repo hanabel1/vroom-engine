@@ -519,19 +519,16 @@ body {
 
 /* -- Preview with grid background -- */
 .detail-preview {
-  background-color: #fafafa;
   padding: 16px;
   border-bottom: 1px solid #e8e8e8;
+  background-image: radial-gradient(circle, #ececec 1px, transparent 1px);
+  background-size: 8px 8px;
 }
 
 /* Only override visual appearance for detail page, not layout */
 .detail-preview .html-preview {
   min-height: 200px;
-  border: 1px solid #e8e8e8;
-  border-radius: 12px;
-  background-image: radial-gradient(circle, #ddd 1px, transparent 1px);
-  background-size: 16px 16px;
-  background-color: #fafafa;
+  background-color: transparent;
 }
 
 /* -- State tabs (inline, no section title) -- */
